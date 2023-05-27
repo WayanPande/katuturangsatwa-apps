@@ -5,11 +5,13 @@ import 'package:go_router/go_router.dart';
 import 'package:katuturangsatwa/widgets/scaffold_with_navbar_tabitem.dart';
 
 class ScaffoldWithBottomNavBar extends StatefulWidget {
-  const ScaffoldWithBottomNavBar(
-      {Key? key, required this.child, required this.tabs})
-      : super(key: key);
-  final Widget child;
+  const ScaffoldWithBottomNavBar({
+    Key? key,
+    required this.tabs,
+    required this.navigationShell,
+  }) : super(key: key);
   final List<ScaffoldWithNavBarTabItem> tabs;
+  final StatefulNavigationShell navigationShell;
 
   @override
   State<ScaffoldWithBottomNavBar> createState() =>
@@ -17,21 +19,12 @@ class ScaffoldWithBottomNavBar extends StatefulWidget {
 }
 
 class _ScaffoldWithBottomNavBarState extends State<ScaffoldWithBottomNavBar> {
-  int _locationToTabIndex(String location) {
-    final index =
-        widget.tabs.indexWhere((t) => location.startsWith(t.initialLocation));
-    // if index not found (-1), return 0
-    return index < 0 ? 0 : index;
-  }
-
-  int get _currentIndex => _locationToTabIndex(GoRouter.of(context).location);
-
   void _onItemTapped(BuildContext context, int tabIndex) {
     // Only navigate if the tab index has changed
-    log(widget.tabs[tabIndex].initialLocation);
-    if (tabIndex != _currentIndex) {
-      context.go(widget.tabs[tabIndex].initialLocation);
-    }
+    widget.navigationShell.goBranch(
+      tabIndex,
+      initialLocation: tabIndex == widget.navigationShell.currentIndex,
+    );
   }
 
   @override
@@ -47,7 +40,7 @@ class _ScaffoldWithBottomNavBarState extends State<ScaffoldWithBottomNavBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: widget.child,
+      body: widget.navigationShell,
       bottomNavigationBar: NavigationBar(
         destinations: List.generate(widget.tabs.length, (index) {
           return NavigationDestination(
@@ -56,7 +49,7 @@ class _ScaffoldWithBottomNavBarState extends State<ScaffoldWithBottomNavBar> {
             label: widget.tabs[index].label,
           );
         }),
-        selectedIndex: _currentIndex,
+        selectedIndex: widget.navigationShell.currentIndex,
         onDestinationSelected: (index) => _onItemTapped(context, index),
         labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
       ),

@@ -5,6 +5,7 @@ import 'package:katuturangsatwa/router/route_utils.dart';
 import 'package:katuturangsatwa/screens/dashboard.dart';
 import 'package:katuturangsatwa/screens/discover.dart';
 import 'package:katuturangsatwa/screens/login.dart';
+import 'package:katuturangsatwa/screens/profile.dart';
 import 'package:katuturangsatwa/screens/register.dart';
 import 'package:katuturangsatwa/screens/splashscreen.dart';
 import 'package:katuturangsatwa/widgets/scaffold_bottom_navbar.dart';
@@ -29,8 +30,15 @@ class AppRouter {
     ),
     ScaffoldWithNavBarTabItem(
       initialLocation: APP_PAGE.discover.toPath,
-      icon: const Icon(Icons.earbuds),
+      icon: const Icon(Icons.explore_outlined),
+      selectedIcon: const Icon(Icons.explore),
       label: 'Discover',
+    ),
+    ScaffoldWithNavBarTabItem(
+      initialLocation: APP_PAGE.profile.toPath,
+      icon: const Icon(Icons.person_outline),
+      selectedIcon: const Icon(Icons.person),
+      label: 'Person',
     ),
   ];
 
@@ -43,12 +51,14 @@ class AppRouter {
     initialLocation: APP_PAGE.home.toPath,
     navigatorKey: _rootNavigatorKey,
     routes: [
-      ShellRoute(
-          navigatorKey: _shellNavigatorKey,
-          builder: (BuildContext context, GoRouterState state, child) {
-            return ScaffoldWithBottomNavBar(tabs: tabs, child: child);
-          },
-          routes: [
+      StatefulShellRoute.indexedStack(
+        builder: (BuildContext context, GoRouterState state,
+            StatefulNavigationShell navigationShell) {
+          return ScaffoldWithBottomNavBar(
+              tabs: tabs, navigationShell: navigationShell);
+        },
+        branches: [
+          StatefulShellBranch(routes: [
             GoRoute(
               path: APP_PAGE.home.toPath,
               name: APP_PAGE.home.toName,
@@ -57,15 +67,33 @@ class AppRouter {
               },
               pageBuilder: defaultPageBuilder(Dashboard()),
             ),
-            GoRoute(
-              path: APP_PAGE.discover.toPath,
-              name: APP_PAGE.discover.toName,
-              pageBuilder: defaultPageBuilder(Discover()),
-              builder: (BuildContext context, GoRouterState state) {
-                return Discover();
-              },
-            ),
           ]),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: APP_PAGE.discover.toPath,
+                name: APP_PAGE.discover.toName,
+                pageBuilder: defaultPageBuilder(Discover()),
+                builder: (BuildContext context, GoRouterState state) {
+                  return Discover();
+                },
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: APP_PAGE.profile.toPath,
+                name: APP_PAGE.profile.toName,
+                pageBuilder: defaultPageBuilder(Profile()),
+                builder: (BuildContext context, GoRouterState state) {
+                  return Profile();
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
       GoRoute(
           path: APP_PAGE.login.toPath,
           name: APP_PAGE.login.toName,
