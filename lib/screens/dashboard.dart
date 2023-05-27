@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:katuturangsatwa/router/route_utils.dart';
 import 'package:provider/provider.dart';
 
 import '../services/auth_services.dart';
@@ -45,7 +46,9 @@ class _DashboardState extends State<Dashboard> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          // context.go(context.namedLocation("register2"));
+        },
         child: const Icon(Icons.add),
       ),
     );

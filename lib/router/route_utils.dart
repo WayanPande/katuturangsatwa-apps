@@ -1,17 +1,10 @@
-enum APP_PAGE {
-  splash,
-  login,
-  home,
-  error,
-  onBoarding,
-  register
-}
+enum APP_PAGE { splash, login, home, error, onBoarding, register, discover }
 
 extension AppPageExtension on APP_PAGE {
   String get toPath {
     switch (this) {
       case APP_PAGE.home:
-        return "/";
+        return "/home";
       case APP_PAGE.login:
         return "/login";
       case APP_PAGE.splash:
@@ -22,6 +15,8 @@ extension AppPageExtension on APP_PAGE {
         return "/start";
       case APP_PAGE.register:
         return "register";
+      case APP_PAGE.discover:
+        return "/discover";
       default:
         return "/";
     }
@@ -41,8 +36,10 @@ extension AppPageExtension on APP_PAGE {
         return "START";
       case APP_PAGE.register:
         return "REGISTER";
+      case APP_PAGE.discover:
+        return "DISCOVER";
       default:
-        return "HOME";
+        return "";
     }
   }
 

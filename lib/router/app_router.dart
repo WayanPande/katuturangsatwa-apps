@@ -1,13 +1,17 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:katuturangsatwa/router/route_utils.dart';
 import 'package:katuturangsatwa/screens/dashboard.dart';
+import 'package:katuturangsatwa/screens/discover.dart';
 import 'package:katuturangsatwa/screens/login.dart';
 import 'package:katuturangsatwa/screens/register.dart';
 import 'package:katuturangsatwa/screens/splashscreen.dart';
+import 'package:katuturangsatwa/widgets/scaffold_bottom_navbar.dart';
 
 import '../screens/onboarding.dart';
 import '../config/AppRouter.dart';
+import '../widgets/scaffold_with_navbar_tabitem.dart';
 
 class AppRouter {
   late final AppService appService;
@@ -16,23 +20,59 @@ class AppRouter {
 
   AppRouter(this.appService);
 
+  final tabs = [
+    ScaffoldWithNavBarTabItem(
+      initialLocation: APP_PAGE.home.toPath,
+      icon: const Icon(Icons.home_outlined),
+      selectedIcon: const Icon(Icons.home),
+      label: 'Home',
+    ),
+    ScaffoldWithNavBarTabItem(
+      initialLocation: APP_PAGE.discover.toPath,
+      icon: const Icon(Icons.earbuds),
+      label: 'Discover',
+    ),
+  ];
+
+  // private navigators
+  final _rootNavigatorKey = GlobalKey<NavigatorState>();
+  final _shellNavigatorKey = GlobalKey<NavigatorState>();
+
   late final GoRouter _goRouter = GoRouter(
     debugLogDiagnostics: true,
-    initialLocation: "/",
-    routes: <GoRoute>[
-      GoRoute(
-        path: APP_PAGE.home.toPath,
-        name: APP_PAGE.home.toName,
-        builder: (BuildContext context, GoRouterState state) {
-          return Dashboard();
-        },
-      ),
+    initialLocation: APP_PAGE.home.toPath,
+    navigatorKey: _rootNavigatorKey,
+    routes: [
+      ShellRoute(
+          navigatorKey: _shellNavigatorKey,
+          builder: (BuildContext context, GoRouterState state, child) {
+            return ScaffoldWithBottomNavBar(tabs: tabs, child: child);
+          },
+          routes: [
+            GoRoute(
+              path: APP_PAGE.home.toPath,
+              name: APP_PAGE.home.toName,
+              builder: (BuildContext context, GoRouterState state) {
+                return Dashboard();
+              },
+              pageBuilder: defaultPageBuilder(Dashboard()),
+            ),
+            GoRoute(
+              path: APP_PAGE.discover.toPath,
+              name: APP_PAGE.discover.toName,
+              pageBuilder: defaultPageBuilder(Discover()),
+              builder: (BuildContext context, GoRouterState state) {
+                return Discover();
+              },
+            ),
+          ]),
       GoRoute(
           path: APP_PAGE.login.toPath,
           name: APP_PAGE.login.toName,
           builder: (BuildContext context, GoRouterState state) {
             return Login();
           },
+          pageBuilder: defaultPageBuilder(Login()),
           routes: [
             GoRoute(
               path: APP_PAGE.register.toPath,
@@ -40,6 +80,7 @@ class AppRouter {
               builder: (BuildContext context, GoRouterState state) {
                 return Register();
               },
+              pageBuilder: defaultPageBuilder(Register()),
             ),
           ]),
       GoRoute(
@@ -48,11 +89,13 @@ class AppRouter {
         builder: (BuildContext context, GoRouterState state) {
           return const SplashPage();
         },
+        pageBuilder: defaultPageBuilder(const SplashPage()),
       ),
       GoRoute(
         path: APP_PAGE.onBoarding.toPath,
         name: APP_PAGE.onBoarding.toName,
         builder: (context, state) => const OnBoardingPage(),
+        pageBuilder: defaultPageBuilder(const OnBoardingPage()),
       ),
     ],
     redirect: (BuildContext context, GoRouterState state) {
@@ -94,3 +137,26 @@ class AppRouter {
     refreshListenable: appService,
   );
 }
+
+CustomTransitionPage buildPageWithDefaultTransition<T>({
+  required BuildContext context,
+  required GoRouterState state,
+  required Widget child,
+}) {
+  return CustomTransitionPage<T>(
+    key: state.pageKey,
+    child: child,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+        FadeTransition(opacity: animation, child: child),
+  );
+}
+
+Page<dynamic> Function(BuildContext, GoRouterState) defaultPageBuilder<T>(
+        Widget child) =>
+    (BuildContext context, GoRouterState state) {
+      return buildPageWithDefaultTransition<T>(
+        context: context,
+        state: state,
+        child: child,
+      );
+    };

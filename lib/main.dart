@@ -64,6 +64,7 @@ class _MyAppState extends State<MyApp> {
             theme: ThemeData(
               colorSchemeSeed: Colors.green[700],
               useMaterial3: true,
+              fontFamily: ""
             ),
             debugShowCheckedModeBanner: false,
             routerConfig: goRouter,
