@@ -3,7 +3,8 @@ enum APP_PAGE {
   login,
   home,
   error,
-  onBoarding
+  onBoarding,
+  register
 }
 
 extension AppPageExtension on APP_PAGE {
@@ -19,6 +20,8 @@ extension AppPageExtension on APP_PAGE {
         return "/error";
       case APP_PAGE.onBoarding:
         return "/start";
+      case APP_PAGE.register:
+        return "register";
       default:
         return "/";
     }
@@ -36,6 +39,8 @@ extension AppPageExtension on APP_PAGE {
         return "ERROR";
       case APP_PAGE.onBoarding:
         return "START";
+      case APP_PAGE.register:
+        return "REGISTER";
       default:
         return "HOME";
     }

@@ -65,6 +65,7 @@ class _MyAppState extends State<MyApp> {
               colorSchemeSeed: Colors.green[700],
               useMaterial3: true,
             ),
+            debugShowCheckedModeBanner: false,
             routerConfig: goRouter,
           );
         },
