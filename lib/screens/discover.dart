@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/dashboard_carousel.dart';
+
 class Discover extends StatefulWidget {
   Discover({Key? key}) : super(key: key);
 
@@ -27,14 +29,7 @@ class _DiscoverState extends State<Discover> {
       appBar: AppBar(
         title: const Text("Discover"),
       ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Text("Discover"),
-
-          ],
-        ),
-      ),
+      // body: DashboardCarousel(),
     );
   }
 }

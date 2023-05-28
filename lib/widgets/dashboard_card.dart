@@ -12,21 +12,21 @@ class DashboardStoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Column(
       children: [
         Card(
           child: InkWell(
             onTap: () {},
             borderRadius: BorderRadius.circular(10),
-            child: Padding(
+            child: Container(
+              width: MediaQuery.of(context).size.width,
               padding: const EdgeInsets.all(5),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Expanded(
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -88,7 +88,7 @@ class DashboardStoryCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       image: DecorationImage(
                         fit: BoxFit.cover,
-                        image: AssetImage(
+                        image: NetworkImage(
                           img,
                         ),
                       ),
