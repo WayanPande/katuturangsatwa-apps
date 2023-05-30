@@ -1,4 +1,4 @@
-enum APP_PAGE { splash, login, home, error, onBoarding, register, discover, profile }
+enum APP_PAGE { splash, login, home, error, onBoarding, register, discover, profile, storyDetail }
 
 extension AppPageExtension on APP_PAGE {
   String get toPath {
@@ -19,6 +19,8 @@ extension AppPageExtension on APP_PAGE {
         return "/discover";
       case APP_PAGE.profile:
         return "/profile";
+      case APP_PAGE.storyDetail:
+        return "/storyDetail";
       default:
         return "/";
     }
@@ -42,6 +44,8 @@ extension AppPageExtension on APP_PAGE {
         return "DISCOVER";
       case APP_PAGE.profile:
         return "PROFILE";
+      case APP_PAGE.storyDetail:
+        return "STORYDETAIL";
       default:
         return "";
     }

@@ -8,6 +8,7 @@ import 'package:katuturangsatwa/screens/login.dart';
 import 'package:katuturangsatwa/screens/profile.dart';
 import 'package:katuturangsatwa/screens/register.dart';
 import 'package:katuturangsatwa/screens/splashscreen.dart';
+import 'package:katuturangsatwa/screens/story_detail.dart';
 import 'package:katuturangsatwa/widgets/scaffold_bottom_navbar.dart';
 
 import '../screens/onboarding.dart';
@@ -58,7 +59,7 @@ class AppRouter {
               tabs: tabs, navigationShell: navigationShell);
         },
         branches: [
-          StatefulShellBranch(routes: [
+          StatefulShellBranch(navigatorKey: _shellNavigatorKey, routes: [
             GoRoute(
               path: APP_PAGE.home.toPath,
               name: APP_PAGE.home.toName,
@@ -95,25 +96,43 @@ class AppRouter {
         ],
       ),
       GoRoute(
-          path: APP_PAGE.login.toPath,
-          name: APP_PAGE.login.toName,
-          builder: (BuildContext context, GoRouterState state) {
-            return Login();
-          },
-          pageBuilder: defaultPageBuilder(Login()),
-          routes: [
-            GoRoute(
-              path: APP_PAGE.register.toPath,
-              name: APP_PAGE.register.toName,
-              builder: (BuildContext context, GoRouterState state) {
-                return Register();
-              },
-              pageBuilder: defaultPageBuilder(Register()),
-            ),
-          ]),
+        path: APP_PAGE.login.toPath,
+        name: APP_PAGE.login.toName,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (BuildContext context, GoRouterState state) {
+          return Login();
+        },
+        pageBuilder: defaultPageBuilder(Login()),
+        routes: [
+          GoRoute(
+            path: APP_PAGE.register.toPath,
+            name: APP_PAGE.register.toName,
+            builder: (BuildContext context, GoRouterState state) {
+              return Register();
+            },
+            pageBuilder: defaultPageBuilder(Register()),
+          ),
+        ],
+      ),
+      GoRoute(
+        path: "${APP_PAGE.storyDetail.toPath}/:id",
+        name: APP_PAGE.storyDetail.toName,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (BuildContext context, GoRouterState state) {
+          return StoryDetail(
+            id: state.pathParameters['id'] ?? "",
+          );
+        },
+        pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
+          context: context,
+          state: state,
+          child: StoryDetail(id: state.pathParameters["id"] ?? ""),
+        ),
+      ),
       GoRoute(
         path: APP_PAGE.splash.toPath,
         name: APP_PAGE.splash.toName,
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (BuildContext context, GoRouterState state) {
           return const SplashPage();
         },
@@ -122,6 +141,7 @@ class AppRouter {
       GoRoute(
         path: APP_PAGE.onBoarding.toPath,
         name: APP_PAGE.onBoarding.toName,
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const OnBoardingPage(),
         pageBuilder: defaultPageBuilder(const OnBoardingPage()),
       ),

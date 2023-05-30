@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:katuturangsatwa/router/route_utils.dart';
 
 class DashboardStoryCard extends StatelessWidget {
   final String title, img;
@@ -16,7 +18,9 @@ class DashboardStoryCard extends StatelessWidget {
       children: [
         Card(
           child: InkWell(
-            onTap: () {},
+            onTap: () {
+              context.pushNamed(APP_PAGE.storyDetail.toName, pathParameters: {"id": title});
+            },
             borderRadius: BorderRadius.circular(10),
             child: Container(
               width: MediaQuery.of(context).size.width,
