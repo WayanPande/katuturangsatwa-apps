@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:katuturangsatwa/router/route_utils.dart';
 import 'package:katuturangsatwa/screens/redirect_login.dart';
 import 'package:provider/provider.dart';
 
@@ -33,7 +35,17 @@ class _WriteState extends State<Write> {
             appBar: AppBar(
               title: Text("Write"),
             ),
-            body: Text("Write"),
+            body: Column(
+              children: [
+                ListTile(
+                  title: Text("Create a new story"),
+                  onTap: () {
+                    context.pushNamed(APP_PAGE.storyInput.toName);
+                  },
+                  leading: Icon(Icons.note_add),
+                )
+              ],
+            ),
           );
   }
 }

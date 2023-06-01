@@ -62,7 +62,7 @@ class _MyAppState extends State<MyApp> {
           return MaterialApp.router(
             title: 'Katuturangsatwa',
             theme: ThemeData(
-              colorSchemeSeed: Colors.blue[700],
+              colorSchemeSeed: Colors.green[700],
               useMaterial3: true,
               fontFamily: "Sen"
             ),

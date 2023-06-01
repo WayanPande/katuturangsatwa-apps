@@ -12,6 +12,7 @@ import 'package:katuturangsatwa/screens/reader.dart';
 import 'package:katuturangsatwa/screens/register.dart';
 import 'package:katuturangsatwa/screens/splashscreen.dart';
 import 'package:katuturangsatwa/screens/story_detail.dart';
+import 'package:katuturangsatwa/screens/story_input.dart';
 import 'package:katuturangsatwa/screens/write.dart';
 import 'package:katuturangsatwa/widgets/scaffold_bottom_navbar.dart';
 
@@ -134,6 +135,15 @@ class AppRouter {
           return Register();
         },
         pageBuilder: defaultPageBuilder(Register()),
+      ),
+      GoRoute(
+        path: APP_PAGE.storyInput.toPath,
+        name: APP_PAGE.storyInput.toName,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (BuildContext context, GoRouterState state) {
+          return StoryInput();
+        },
+        pageBuilder: defaultPageBuilder(StoryInput()),
       ),
       GoRoute(
         path: "${APP_PAGE.storyDetail.toPath}/:id",
