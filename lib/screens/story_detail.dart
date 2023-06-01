@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:katuturangsatwa/router/route_utils.dart';
 import 'package:katuturangsatwa/widgets/character_pill.dart';
 
 class StoryDetail extends StatefulWidget {
@@ -73,7 +75,9 @@ class _StoryDetailState extends State<StoryDetail> {
                     )
                   ],
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  context.pushNamed(APP_PAGE.reader.toName, pathParameters: {"id": widget.id});
+                },
               ),
             ),
           ],
