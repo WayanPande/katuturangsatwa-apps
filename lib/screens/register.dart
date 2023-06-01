@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../router/route_utils.dart';
-
 class Register extends StatefulWidget {
   Register({Key? key}) : super(key: key);
 
@@ -29,11 +27,9 @@ class _RegisterState extends State<Register> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Register"),
-
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -147,9 +143,7 @@ class _RegisterState extends State<Register> {
                     children: [
                       Expanded(
                         child: FilledButton(
-                          onPressed: () {
-
-                          },
+                          onPressed: () {},
                           child: const Text(
                             "Register",
                           ),
@@ -174,8 +168,7 @@ class _RegisterState extends State<Register> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          context.go(
-                              context.namedLocation(APP_PAGE.login.toName));
+                          context.pop();
                         },
                         child: const Text(
                           "Login",
