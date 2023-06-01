@@ -124,10 +124,6 @@ class _DashboardState extends State<Dashboard> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: const Icon(Icons.add),
-      ),
     );
   }
 }

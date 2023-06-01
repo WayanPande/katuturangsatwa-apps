@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
@@ -6,9 +8,11 @@ import 'package:katuturangsatwa/screens/dashboard.dart';
 import 'package:katuturangsatwa/screens/discover.dart';
 import 'package:katuturangsatwa/screens/login.dart';
 import 'package:katuturangsatwa/screens/profile.dart';
+import 'package:katuturangsatwa/screens/reader.dart';
 import 'package:katuturangsatwa/screens/register.dart';
 import 'package:katuturangsatwa/screens/splashscreen.dart';
 import 'package:katuturangsatwa/screens/story_detail.dart';
+import 'package:katuturangsatwa/screens/write.dart';
 import 'package:katuturangsatwa/widgets/scaffold_bottom_navbar.dart';
 
 import '../screens/onboarding.dart';
@@ -34,6 +38,12 @@ class AppRouter {
       icon: const Icon(Icons.explore_outlined),
       selectedIcon: const Icon(Icons.explore),
       label: 'Discover',
+    ),
+    ScaffoldWithNavBarTabItem(
+      initialLocation: APP_PAGE.write.toPath,
+      icon: const Icon(Icons.edit_outlined),
+      selectedIcon: const Icon(Icons.edit),
+      label: 'Write',
     ),
     ScaffoldWithNavBarTabItem(
       initialLocation: APP_PAGE.profile.toPath,
@@ -84,6 +94,18 @@ class AppRouter {
           StatefulShellBranch(
             routes: [
               GoRoute(
+                path: APP_PAGE.write.toPath,
+                name: APP_PAGE.write.toName,
+                pageBuilder: defaultPageBuilder(Write()),
+                builder: (BuildContext context, GoRouterState state) {
+                  return Write();
+                },
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
                 path: APP_PAGE.profile.toPath,
                 name: APP_PAGE.profile.toName,
                 pageBuilder: defaultPageBuilder(Profile()),
@@ -103,16 +125,15 @@ class AppRouter {
           return Login();
         },
         pageBuilder: defaultPageBuilder(Login()),
-        routes: [
-          GoRoute(
-            path: APP_PAGE.register.toPath,
-            name: APP_PAGE.register.toName,
-            builder: (BuildContext context, GoRouterState state) {
-              return Register();
-            },
-            pageBuilder: defaultPageBuilder(Register()),
-          ),
-        ],
+      ),
+      GoRoute(
+        path: APP_PAGE.register.toPath,
+        name: APP_PAGE.register.toName,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (BuildContext context, GoRouterState state) {
+          return Register();
+        },
+        pageBuilder: defaultPageBuilder(Register()),
       ),
       GoRoute(
         path: "${APP_PAGE.storyDetail.toPath}/:id",
@@ -127,6 +148,21 @@ class AppRouter {
           context: context,
           state: state,
           child: StoryDetail(id: state.pathParameters["id"] ?? ""),
+        ),
+      ),
+      GoRoute(
+        path: "${APP_PAGE.reader.toPath}/:id",
+        name: APP_PAGE.reader.toName,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (BuildContext context, GoRouterState state) {
+          return Reader(
+            id: state.pathParameters['id'] ?? "",
+          );
+        },
+        pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
+          context: context,
+          state: state,
+          child: Reader(id: state.pathParameters["id"] ?? ""),
         ),
       ),
       GoRoute(
@@ -166,21 +202,25 @@ class AppRouter {
       if (!isInitialized && !isGoingToInit) {
         return splashLocation;
         // If not onboard and not going to onboard redirect to OnBoarding
-      } else if (isInitialized && !isOnboarded && !isGoingToOnboard) {
+      }
+      if (isInitialized && !isOnboarded && !isGoingToOnboard) {
         return onboardLocation;
         // If not logedin and not going to login redirect to Login
-      } else if (isInitialized && isOnboarded && !isLogedIn) {
+      }
+
+      if (isInitialized && isOnboarded && isGoingToLogin) {
         if (isGoingToRegister) return registerLocation;
         return loginLocation;
         // If all the scenarios are cleared but still going to any of that screen redirect to Home
-      } else if ((isLogedIn && isGoingToLogin) ||
+      }
+
+      if ((isLogedIn && isGoingToLogin) ||
           (isInitialized && isGoingToInit) ||
           (isOnboarded && isGoingToOnboard)) {
         return homeLocation;
-      } else {
-        // Else Don't do anything
-        return null;
       }
+
+      return null;
     },
     refreshListenable: appService,
   );

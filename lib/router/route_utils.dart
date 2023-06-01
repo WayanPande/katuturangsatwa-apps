@@ -1,4 +1,16 @@
-enum APP_PAGE { splash, login, home, error, onBoarding, register, discover, profile, storyDetail }
+enum APP_PAGE {
+  splash,
+  login,
+  home,
+  error,
+  onBoarding,
+  register,
+  discover,
+  profile,
+  storyDetail,
+  reader,
+  write
+}
 
 extension AppPageExtension on APP_PAGE {
   String get toPath {
@@ -14,13 +26,17 @@ extension AppPageExtension on APP_PAGE {
       case APP_PAGE.onBoarding:
         return "/start";
       case APP_PAGE.register:
-        return "register";
+        return "/register";
       case APP_PAGE.discover:
         return "/discover";
       case APP_PAGE.profile:
         return "/profile";
       case APP_PAGE.storyDetail:
         return "/storyDetail";
+      case APP_PAGE.reader:
+        return "/reader";
+      case APP_PAGE.write:
+        return "/write";
       default:
         return "/";
     }
@@ -46,6 +62,10 @@ extension AppPageExtension on APP_PAGE {
         return "PROFILE";
       case APP_PAGE.storyDetail:
         return "STORYDETAIL";
+      case APP_PAGE.reader:
+        return "READER";
+      case APP_PAGE.write:
+        return "WRITE";
       default:
         return "";
     }

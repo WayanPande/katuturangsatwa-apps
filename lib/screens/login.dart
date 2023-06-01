@@ -94,7 +94,9 @@ class _LoginState extends State<Login> {
                       Expanded(
                         child: FilledButton(
                           onPressed: () {
-                            authService.login();
+                            authService.login().then((value) => value
+                                ? context.goNamed(APP_PAGE.home.toName)
+                                : null);
                           },
                           child: const Text(
                             "Login",
@@ -120,8 +122,7 @@ class _LoginState extends State<Login> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          context.go(
-                              context.namedLocation(APP_PAGE.register.toName));
+                          context.pushNamed(APP_PAGE.register.toName);
                         },
                         child: const Text(
                           "Register",
