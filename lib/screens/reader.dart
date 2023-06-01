@@ -18,7 +18,7 @@ class _ReaderState extends State<Reader> {
   bool isScrollingDown = false;
   Color _bgColor = Colors.white;
   Color _textColor = Colors.black;
-  double _fontSize = 15;
+  double _fontSize = 17;
 
   @override
   void initState() {
@@ -78,13 +78,29 @@ class _ReaderState extends State<Reader> {
                                 width: MediaQuery.of(context).size.width,
                                 padding: const EdgeInsets.all(20),
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
+                                    TextButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          _bgColor = Colors.white;
+                                          _textColor = Colors.black;
+                                          _fontSize = 17;
+                                        });
+                                      },
+                                      child: const Text("Reset"),
+                                    ),
                                     Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        const Text("Page Color"),
+                                        const Text(
+                                          "Page Color",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 17,
+                                          ),
+                                        ),
                                         const SizedBox(
                                           height: 10,
                                         ),
@@ -100,7 +116,7 @@ class _ReaderState extends State<Reader> {
                                                     _textColor = Colors.black;
                                                   });
                                                 },
-                                                child: Text("white"),
+                                                child: const Text("light"),
                                               ),
                                             ),
                                             const SizedBox(
@@ -110,16 +126,16 @@ class _ReaderState extends State<Reader> {
                                               child: FilledButton(
                                                 onPressed: () {
                                                   setState(() {
-                                                    _bgColor = Colors.black;
-                                                    _textColor = Colors.white;
+                                                    _bgColor = Colors.black87;
+                                                    _textColor = Colors.white70;
                                                   });
                                                 },
-                                                child: Text("black"),
                                                 style: ButtonStyle(
                                                   backgroundColor:
                                                       MaterialStateProperty.all(
                                                           Colors.black),
                                                 ),
+                                                child: const Text("dark"),
                                               ),
                                             ),
                                             const SizedBox(
@@ -140,8 +156,8 @@ class _ReaderState extends State<Reader> {
                                                           Colors
                                                               .yellow.shade50),
                                                 ),
-                                                child: Text(
-                                                  "Dim",
+                                                child: const Text(
+                                                  "dim",
                                                   style: TextStyle(
                                                       color: Colors.black),
                                                 ),
@@ -158,7 +174,13 @@ class _ReaderState extends State<Reader> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        const Text("Font"),
+                                        const Text(
+                                          "Font size",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 17,
+                                          ),
+                                        ),
                                         const SizedBox(
                                           height: 10,
                                         ),
@@ -170,7 +192,9 @@ class _ReaderState extends State<Reader> {
                                               child: IconButton(
                                                 onPressed: () {
                                                   setState(() {
-                                                    if(_fontSize > 12)  _fontSize -= 1;
+                                                    if (_fontSize > 12) {
+                                                      _fontSize -= 1;
+                                                    }
                                                   });
                                                 },
                                                 icon: Icon(
@@ -189,11 +213,13 @@ class _ReaderState extends State<Reader> {
                                             ),
                                             Expanded(
                                               child: IconButton(
-                                                onPressed: (_fontSize < 25) ? () {
+                                                onPressed: () {
                                                   setState(() {
-                                                     _fontSize += 1;
+                                                    if ((_fontSize < 25)) {
+                                                      _fontSize += 1;
+                                                    }
                                                   });
-                                                } : null,
+                                                },
                                                 icon: Icon(
                                                   Icons.text_increase,
                                                   color: Colors.grey.shade200,
@@ -233,7 +259,7 @@ class _ReaderState extends State<Reader> {
                     });
                   },
                   child: Container(
-                    padding: EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: _bgColor,
                     ),
