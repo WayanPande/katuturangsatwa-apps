@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_sticky_widgets/flutter_sticky_widgets.dart';
 
+import '../widgets/dashboard_card.dart';
 import '../widgets/tag_card.dart';
+import 'dashboard.dart';
 
 class Discover extends StatefulWidget {
   const Discover({Key? key}) : super(key: key);
@@ -63,14 +65,20 @@ class _DiscoverState extends State<Discover> {
                         focusNode: _focus,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Theme.of(context).primaryColor.withOpacity(0.5), width: 0.0),
-                            borderRadius: const BorderRadius.all(Radius.circular(16)),
+                            borderSide: BorderSide(
+                                color: Theme.of(context)
+                                    .primaryColor
+                                    .withOpacity(0.5),
+                                width: 0.0),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(16)),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Theme.of(context).primaryColor, width: 2.0),
-                            borderRadius: const BorderRadius.all(Radius.circular(16)),
+                            borderSide: BorderSide(
+                                color: Theme.of(context).primaryColor,
+                                width: 2.0),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(16)),
                           ),
                           filled: true,
                           prefixIcon: const Icon(
@@ -124,35 +132,52 @@ class _DiscoverState extends State<Discover> {
                   SizedBox(
                     height: MediaQuery.of(context).size.height / 12,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Browse tags",
-                          style: TextStyle(fontSize: 20),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        GridView.count(
-                          shrinkWrap: true,
-                          physics: const ScrollPhysics(),
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
-                          childAspectRatio: 3,
-                          children: List.generate(
-                            25,
-                            (index) => TagCard(
-                              key: Key("tagCard-$index"),
-                              id: index,
-                              label: "Kategori $index",
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 500),
+                    switchInCurve: Curves.easeInCirc,
+                    switchOutCurve: Curves.easeOutCirc,
+                    child: !_focus.hasFocus
+                        ? Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  "Browse tags",
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                GridView.count(
+                                  shrinkWrap: true,
+                                  physics: const ScrollPhysics(),
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 10,
+                                  mainAxisSpacing: 10,
+                                  childAspectRatio: 3,
+                                  children: List.generate(
+                                    25,
+                                    (index) => TagCard(
+                                      key: Key("tagCard-$index"),
+                                      id: index,
+                                      label: "Kategori $index",
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ),
-                      ],
+                          )
+                        : Column(
+                      children: List.generate(
+                        imgList.length,
+                            (index) {
+                          return DashboardStoryCard(
+                            title: imgList[index].title,
+                            img: imgList[index].img,
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ],
