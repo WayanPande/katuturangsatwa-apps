@@ -67,6 +67,8 @@ class _ReaderState extends State<Reader> {
                 title: Text(
                   widget.id,
                 ),
+                backgroundColor: _bgColor,
+                foregroundColor: _textColor,
                 actions: [
                   IconButton(
                     onPressed: () {
