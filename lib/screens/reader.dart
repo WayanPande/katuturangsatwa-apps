@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:katuturangsatwa/constant/MyColor.dart';
 
 class Reader extends StatefulWidget {
   final String id;
@@ -16,7 +17,7 @@ class _ReaderState extends State<Reader> {
   final ScrollController _scrollViewController = ScrollController();
   bool _showAppbar = true;
   bool isScrollingDown = false;
-  Color _bgColor = Colors.white;
+  Color _bgColor = MY_COLOR.bgColor;
   Color _textColor = Colors.black;
   double _fontSize = 17;
 
@@ -83,7 +84,7 @@ class _ReaderState extends State<Reader> {
                                     TextButton(
                                       onPressed: () {
                                         setState(() {
-                                          _bgColor = Colors.white;
+                                          _bgColor = MY_COLOR.bgColor;
                                           _textColor = Colors.black;
                                           _fontSize = 17;
                                         });
@@ -112,7 +113,7 @@ class _ReaderState extends State<Reader> {
                                               child: OutlinedButton(
                                                 onPressed: () {
                                                   setState(() {
-                                                    _bgColor = Colors.white;
+                                                    _bgColor = MY_COLOR.bgColor;
                                                     _textColor = Colors.black;
                                                   });
                                                 },
@@ -147,7 +148,7 @@ class _ReaderState extends State<Reader> {
                                                   setState(() {
                                                     _bgColor =
                                                         Colors.yellow.shade50;
-                                                    _textColor = Colors.black;
+                                                    _textColor = Colors.brown;
                                                   });
                                                 },
                                                 style: ButtonStyle(
