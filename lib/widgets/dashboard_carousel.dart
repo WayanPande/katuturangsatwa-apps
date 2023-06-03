@@ -62,9 +62,7 @@ class _DashboardCarouselState extends State<DashboardCarousel> {
                           vertical: 8.0, horizontal: 4.0),
                       decoration: BoxDecoration(
                         shape: BoxShape.rectangle,
-                        color: (Theme.of(context).brightness == Brightness.dark
-                                ? Colors.white
-                                : Colors.blue)
+                        color: Theme.of(context).primaryColor
                             .withOpacity(_current == entry.key ? 0.9 : 0.4),
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -76,10 +74,7 @@ class _DashboardCarouselState extends State<DashboardCarousel> {
                           vertical: 8.0, horizontal: 4.0),
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: (Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? Colors.white
-                                  : Colors.blue)
+                          color: Theme.of(context).primaryColor
                               .withOpacity(_current == entry.key ? 0.9 : 0.4)),
                     ),
             );
