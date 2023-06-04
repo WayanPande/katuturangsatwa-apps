@@ -175,6 +175,8 @@ class _DiscoverState extends State<Discover> {
                           return DashboardStoryCard(
                             title: imgList[index].title,
                             img: imgList[index].img,
+                            author: "Wayan pande",
+                            id: 1,
                           );
                         },
                       ),

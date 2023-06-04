@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:katuturangsatwa/router/route_utils.dart';
 
 class DashboardStoryCard extends StatelessWidget {
-  final String title, img;
+  final String title, img, author;
+  final int id;
 
-  const DashboardStoryCard({Key? key, required this.title, required this.img})
+  const DashboardStoryCard({Key? key, required this.title, required this.img, required this.author, required this.id})
       : super(key: key);
 
-  String getImageUrl() {
-    return "https://api.dicebear.com/6.x/miniavs/jpg";
+  String getImageUrl(String? name) {
+    return "https://api.dicebear.com/6.x/miniavs/jpg?seed=$name";
   }
 
   @override
@@ -19,7 +21,7 @@ class DashboardStoryCard extends StatelessWidget {
         Card(
           child: InkWell(
             onTap: () {
-              context.pushNamed(APP_PAGE.storyDetail.toName, pathParameters: {"id": title});
+              context.pushNamed(APP_PAGE.storyDetail.toName, pathParameters: {"id": id.toString()});
             },
             borderRadius: BorderRadius.circular(10),
             child: Container(
@@ -64,7 +66,7 @@ class DashboardStoryCard extends StatelessWidget {
                                   image: DecorationImage(
                                     fit: BoxFit.cover,
                                     image: NetworkImage(
-                                      getImageUrl(),
+                                      getImageUrl(author),
                                     ),
                                   ),
                                   borderRadius: BorderRadius.circular(15),
@@ -73,9 +75,9 @@ class DashboardStoryCard extends StatelessWidget {
                               const SizedBox(
                                 width: 8,
                               ),
-                              const Text(
-                                "Wayan Pande",
-                                style: TextStyle(
+                              Text(
+                                author,
+                                style: const TextStyle(
                                   overflow: TextOverflow.ellipsis,
                                   fontSize: 12,
                                 ),
@@ -93,7 +95,7 @@ class DashboardStoryCard extends StatelessWidget {
                       image: DecorationImage(
                         fit: BoxFit.cover,
                         image: NetworkImage(
-                          img,
+                          dotenv.env['IMG_URL']! + img,
                         ),
                       ),
                       borderRadius: const BorderRadius.all(

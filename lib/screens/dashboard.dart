@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:katuturangsatwa/providers/stories.dart';
 import 'package:katuturangsatwa/router/route_utils.dart';
+import 'package:katuturangsatwa/util/data_class.dart';
 import 'package:katuturangsatwa/widgets/dashboard_card.dart';
 import 'package:katuturangsatwa/widgets/dashboard_carousel.dart';
+import 'package:provider/provider.dart';
 
 final List<CarouselProps> imgList = [
   CarouselProps(
@@ -47,9 +50,14 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  List<Story> _storyList = [];
+
   @override
   void initState() {
     super.initState();
+    Future.delayed(Duration.zero).then((_) {
+      Provider.of<Stories>(context, listen: false).getStories();
+    });
   }
 
   @override
@@ -59,6 +67,8 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+    var story = Provider.of<Stories>(context);
+    _storyList = story.storyList;
     return Scaffold(
       appBar: AppBar(
         title: const Text("Dashboard"),
@@ -107,18 +117,20 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ),
               Container(
-                padding: EdgeInsets.all(10),
-                child: Column(
+                padding: const EdgeInsets.all(10),
+                child: _storyList.isNotEmpty ? Column(
                   children: List.generate(
-                    imgList.length,
-                    (index) {
+                    _storyList.length,
+                        (index) {
                       return DashboardStoryCard(
-                        title: imgList[index].title,
-                        img: imgList[index].img,
+                        title: _storyList[index].judul ?? "katuturangsatwa",
+                        img: _storyList[index].gambar!,
+                        author: _storyList[index].author ?? "katuturangsatwa",
+                        id: _storyList[index].id!,
                       );
                     },
                   ),
-                ),
+                ) : const Text("no data"),
               ),
             ],
           ),

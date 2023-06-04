@@ -161,18 +161,22 @@ class AppRouter {
         ),
       ),
       GoRoute(
-        path: "${APP_PAGE.reader.toPath}/:id",
+        path: APP_PAGE.reader.toPath,
         name: APP_PAGE.reader.toName,
         parentNavigatorKey: _rootNavigatorKey,
         builder: (BuildContext context, GoRouterState state) {
           return Reader(
-            id: state.pathParameters['id'] ?? "",
+            text: state.queryParameters['text'] ?? "",
+            title: state.queryParameters['title'] ?? "",
           );
         },
         pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
           context: context,
           state: state,
-          child: Reader(id: state.pathParameters["id"] ?? ""),
+          child: Reader(
+            text: state.queryParameters["text"] ?? "",
+            title: state.queryParameters['title'] ?? "",
+          ),
         ),
       ),
       GoRoute(

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:katuturangsatwa/router/route_utils.dart';
 import 'package:katuturangsatwa/widgets/character_pill.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/stories.dart';
 
 class StoryDetail extends StatefulWidget {
   final String id;
@@ -15,9 +19,22 @@ class StoryDetail extends StatefulWidget {
 }
 
 class _StoryDetailState extends State<StoryDetail> {
+  bool _isLoading = false;
+
   @override
   void initState() {
     super.initState();
+    setState(() {
+      _isLoading = true;
+    });
+    Future.delayed(Duration.zero).then((_) {
+      Provider.of<Stories>(context, listen: false)
+          .getStoryDetail(int.parse(widget.id));
+    }).then((_) {
+      setState(() {
+        _isLoading = false;
+      });
+    });
   }
 
   @override
@@ -27,6 +44,9 @@ class _StoryDetailState extends State<StoryDetail> {
 
   @override
   Widget build(BuildContext context) {
+    var story = Provider.of<Stories>(context).storyDetail;
+    List<String>? tokoh = story?.tokoh?.split(";");
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -76,106 +96,114 @@ class _StoryDetailState extends State<StoryDetail> {
                   ],
                 ),
                 onPressed: () {
-                  context.pushNamed(APP_PAGE.reader.toName, pathParameters: {"id": widget.id});
+                  context.pushNamed(APP_PAGE.reader.toName,
+                      queryParameters: {"text": story?.text ?? "", "title": story?.judul ?? ""});
                 },
               ),
             ),
           ],
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    widget.id,
-                    style: const TextStyle(
+                  Center(
+                    child: Column(
+                      children: [
+                        Text(
+                          story?.judul ?? "",
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          story?.author ?? "",
+                          style: TextStyle(
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 40,
+                  ),
+                  Center(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      height: 250,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: NetworkImage(
+                            dotenv.env['IMG_URL']! + (story?.gambar ?? ""),
+                          ),
+                        ),
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 40,
+                  ),
+                  const Text(
+                    "Character",
+                    style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
-                    textAlign: TextAlign.center,
+                    textAlign: TextAlign.start,
                   ),
                   const SizedBox(
                     height: 10,
                   ),
-                  Text(
-                    "Wayan Pande",
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: List.generate(tokoh?.length ?? 0, (index) {
+                        return CharaterPill(
+                          label: tokoh?[index] ?? "",
+                          key: Key("tokoh-$index"),
+                        );
+                      }),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 40,
+                  ),
+                  const Text(
+                    "Overview",
                     style: TextStyle(
-                      color: Colors.grey,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.start,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    story?.ringkas ?? "",
+                    style: TextStyle(
+                      color: Colors.black45,
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(
-              height: 40,
-            ),
-            Center(
-              child: Container(
-                width: MediaQuery.of(context).size.width * 0.9,
-                height: 250,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: NetworkImage(
-                      'https://katuturangsatwa.com/static/image/satwa_cover/2c801cc3a49d4f44a6bc8c8c6ec12c71.jpg',
-                    ),
-                  ),
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(10),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 40,
-            ),
-            const Text(
-              "Character",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.start,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: List.generate(10, (index) {
-                  return const CharaterPill();
-                }),
-              ),
-            ),
-            const SizedBox(
-              height: 40,
-            ),
-            const Text(
-              "Overview",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.start,
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Text(
-              "solah ni bawang ajaka ni kesuna matungkasan pesan, tan bina cara yeh masanding teken apine. ni kesuna anak bobab, male megae, duweg pesan ngae pisuna, ento makrana memene stata ngugu pisadun ni kesuna ane ngorahang ni bawang ngumbang di tukade ngenemin anak truna. krana ngugu munyin ni kesuna, ditu ni bawang lantas tigtiga, siama aji yeh anget tur tundena magedi. disubane orahina teken ni bawang, ditu laut ni kesuna metu kenehne ane kaliwat loba. krana ento, lantas ni kesuna ngorahin memenne nigtig ukudane apang kanti babak belur. neked jumah ditu lantas gumatat-gumitite ento ane mencanen ni kesuna kanti ngemasin mati.",
-              style: TextStyle(
-                color: Colors.black45,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

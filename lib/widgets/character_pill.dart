@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class CharaterPill extends StatelessWidget {
-  const CharaterPill({Key? key}) : super(key: key);
+  final String label;
+  const CharaterPill({Key? key, required this.label}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -9,7 +10,7 @@ class CharaterPill extends StatelessWidget {
       children: [
         FilledButton.tonal(
           onPressed: () {},
-          child: Text("Ni Bawange"),
+          child: Text(label),
         ),
         const SizedBox(
           width: 10,
