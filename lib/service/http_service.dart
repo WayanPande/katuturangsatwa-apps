@@ -33,4 +33,17 @@ class HttpService {
       throw "Unable to retrieve posts.";
     }
   }
+
+  Future<List<dynamic>> getStoriesPaginate(int limit, int page, [String keyword = ""]) async {
+    final String storyURL;
+    storyURL = "${dotenv.env['API_URL']}api/v1/stories?limit=$limit&page=$page&keyword=$keyword";
+    http.Response res = await http.get(Uri.parse(storyURL));
+
+    if (res.statusCode == 200) {
+      List<dynamic> body = jsonDecode(res.body);
+      return body;
+    } else {
+      throw "Unable to retrieve posts.";
+    }
+  }
 }

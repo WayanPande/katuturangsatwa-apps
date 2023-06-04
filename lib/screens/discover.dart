@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_sticky_widgets/flutter_sticky_widgets.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:katuturangsatwa/service/http_service.dart';
+import 'package:katuturangsatwa/util/data_class.dart';
 
 import '../widgets/dashboard_card.dart';
 import '../widgets/tag_card.dart';
-import 'dashboard.dart';
 
 class Discover extends StatefulWidget {
   const Discover({Key? key}) : super(key: key);
@@ -18,9 +20,16 @@ class _DiscoverState extends State<Discover> {
   final ScrollController _controller = ScrollController();
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _focus = FocusNode();
+  static const _pageSize = 20;
+
+  final PagingController<int, Story> _pagingController =
+      PagingController(firstPageKey: 1);
 
   @override
   void initState() {
+    _pagingController.addPageRequestListener((pageKey) {
+      _fetchPage(pageKey);
+    });
     super.initState();
   }
 
@@ -29,7 +38,25 @@ class _DiscoverState extends State<Discover> {
     _controller.dispose();
     _searchController.dispose();
     _focus.dispose();
+    _pagingController.dispose();
     super.dispose();
+  }
+
+  Future<void> _fetchPage(int pageKey) async {
+    try {
+      final newItems =
+          await HttpService().getStoriesPaginate(_pageSize, pageKey, _searchController.text);
+      var finalData = newItems.map((e) => Story.fromJson(e)).toList();
+      final isLastPage = finalData.length < _pageSize;
+      if (isLastPage) {
+        _pagingController.appendLastPage(finalData);
+      } else {
+        final nextPageKey = pageKey + 1;
+        _pagingController.appendPage(finalData, nextPageKey);
+      }
+    } catch (error) {
+      _pagingController.error = error;
+    }
   }
 
   @override
@@ -57,7 +84,9 @@ class _DiscoverState extends State<Discover> {
                     Expanded(
                       child: TextFormField(
                         controller: _searchController,
-                        onFieldSubmitted: (value) {},
+                        onFieldSubmitted: (value) {
+                          _pagingController.refresh();
+                        },
                         onTap: () {
                           setState(() => {});
                         },
@@ -103,6 +132,7 @@ class _DiscoverState extends State<Discover> {
                               onPressed: () {
                                 _focus.unfocus();
                                 _searchController.clear();
+                                _pagingController.refresh();
                                 setState(() => {});
                               },
                               child: const Text("Cancel"),
@@ -168,19 +198,20 @@ class _DiscoverState extends State<Discover> {
                               ],
                             ),
                           )
-                        : Column(
-                      children: List.generate(
-                        imgList.length,
-                            (index) {
-                          return DashboardStoryCard(
-                            title: imgList[index].title,
-                            img: imgList[index].img,
-                            author: "Wayan pande",
-                            id: 1,
-                          );
-                        },
-                      ),
-                    ),
+                        : PagedListView<int, Story>(
+                            shrinkWrap: true,
+                            physics: const ScrollPhysics(),
+                            pagingController: _pagingController,
+                            builderDelegate: PagedChildBuilderDelegate<Story>(
+                              itemBuilder: (context, item, index) =>
+                                  DashboardStoryCard(
+                                title: item.judul ?? "",
+                                author: item.author ?? "",
+                                id: item.id!,
+                                img: item.gambar ?? "",
+                              ),
+                            ),
+                          ),
                   ),
                 ],
               ),
