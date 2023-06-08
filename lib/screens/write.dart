@@ -30,7 +30,7 @@ class _WriteState extends State<Write> {
   Widget build(BuildContext context) {
     final appService = Provider.of<AppService>(context);
     return !appService.loginState
-        ? RedirectLogin()
+        ? const RedirectLogin()
         : Scaffold(
             appBar: AppBar(
               title: Text("Write"),

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:katuturangsatwa/providers/stories.dart';
+import 'package:katuturangsatwa/providers/users.dart';
 import 'package:katuturangsatwa/router/app_router.dart';
 import 'package:katuturangsatwa/services/auth_services.dart';
 import 'package:provider/provider.dart';
@@ -47,6 +48,7 @@ class _MyAppState extends State<MyApp> {
   late AuthService authService;
   late StreamSubscription<bool> authSubscription;
   late Stories stories;
+  late Users user;
 
   @override
   void initState() {
@@ -54,6 +56,7 @@ class _MyAppState extends State<MyApp> {
     authService = AuthService();
     authSubscription = authService.onAuthStateChange.listen(onAuthStateChange);
     stories = Stories();
+    user = Users();
     super.initState();
   }
 
@@ -74,7 +77,8 @@ class _MyAppState extends State<MyApp> {
           ChangeNotifierProvider<AppService>(create: (_) => appService),
           Provider<AppRouter>(create: (_) => AppRouter(appService)),
           Provider<AuthService>(create: (_) => authService),
-          ChangeNotifierProvider<Stories>(create: (_) => stories)
+          ChangeNotifierProvider<Stories>(create: (_) => stories),
+          ChangeNotifierProvider<Users>(create: (_) => user)
         ],
         child: Builder(
           builder: (context) {

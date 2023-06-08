@@ -72,3 +72,41 @@ class StoryDetail {
   }
 }
 
+class LoginData {
+
+  final String username, password;
+
+  LoginData({
+    required this.username,
+    required this.password,
+  });
+}
+
+class User {
+  String? email;
+  String? gambar;
+  int? id;
+  String? nama;
+  String? username;
+
+  User({this.email, this.gambar, this.id, this.nama, this.username});
+
+  User.fromJson(Map<String, dynamic> json) {
+    email = json['email'];
+    gambar = json['gambar'];
+    id = json['id'];
+    nama = json['nama'];
+    username = json['username'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['email'] = email;
+    data['gambar'] = gambar;
+    data['id'] = id;
+    data['nama'] = nama;
+    data['username'] = username;
+    return data;
+  }
+}
+

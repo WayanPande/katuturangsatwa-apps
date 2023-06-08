@@ -3,8 +3,10 @@ import 'package:go_router/go_router.dart';
 
 import 'package:katuturangsatwa/router/app_router.dart';
 import 'package:katuturangsatwa/router/route_utils.dart';
+import 'package:katuturangsatwa/util/data_class.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/users.dart';
 import '../services/auth_services.dart';
 
 class Login extends StatefulWidget {
@@ -94,9 +96,17 @@ class _LoginState extends State<Login> {
                       Expanded(
                         child: FilledButton(
                           onPressed: () {
-                            authService.login().then((value) => value
-                                ? context.goNamed(APP_PAGE.home.toName)
-                                : null);
+                            authService
+                                .login(LoginData(
+                                    username: email.text,
+                                    password: password.text))
+                                .then((value) {
+                              if (value) {
+                                Provider.of<Users>(context, listen: false)
+                                    .getUserData();
+                                context.goNamed(APP_PAGE.home.toName);
+                              }
+                            });
                           },
                           child: const Text(
                             "Login",
