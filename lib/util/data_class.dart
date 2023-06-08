@@ -82,6 +82,18 @@ class LoginData {
   });
 }
 
+class RegisterData {
+
+  final String username, password, name, email;
+
+  RegisterData({
+    required this.username,
+    required this.password,
+    required this.email,
+    required this.name
+  });
+}
+
 class User {
   String? email;
   String? gambar;
