@@ -1,15 +1,14 @@
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:go_router/go_router.dart';
+import 'package:katuturangsatwa/util/data_class.dart';
 
-class CarouselProps {
-  String img, title, author;
-
-  CarouselProps({required this.img, required this.title, required this.author});
-}
+import '../router/route_utils.dart';
 
 class DashboardCarousel extends StatefulWidget {
-  final List<CarouselProps> data;
+  final List<Story> data;
 
   DashboardCarousel({Key? key, required this.data}) : super(key: key);
 
@@ -38,7 +37,7 @@ class _DashboardCarouselState extends State<DashboardCarousel> {
     return Column(
       children: [
         CarouselSlider(
-          items: imageSliders(widget.data),
+          items: imageSliders(widget.data, context),
           carouselController: _controller,
           options: CarouselOptions(
               enlargeCenterPage: true,
@@ -62,7 +61,8 @@ class _DashboardCarouselState extends State<DashboardCarousel> {
                           vertical: 8.0, horizontal: 4.0),
                       decoration: BoxDecoration(
                         shape: BoxShape.rectangle,
-                        color: Theme.of(context).primaryColor
+                        color: Theme.of(context)
+                            .primaryColor
                             .withOpacity(_current == entry.key ? 0.9 : 0.4),
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -74,7 +74,8 @@ class _DashboardCarouselState extends State<DashboardCarousel> {
                           vertical: 8.0, horizontal: 4.0),
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Theme.of(context).primaryColor
+                          color: Theme.of(context)
+                              .primaryColor
                               .withOpacity(_current == entry.key ? 0.9 : 0.4)),
                     ),
             );
@@ -85,11 +86,14 @@ class _DashboardCarouselState extends State<DashboardCarousel> {
   }
 }
 
-List<Widget> imageSliders(List<CarouselProps> data) {
+List<Widget> imageSliders(List<Story> data, BuildContext context) {
   return data
       .map(
         (item) => InkWell(
-          onTap: () {},
+          onTap: () {
+            context.pushNamed(APP_PAGE.storyDetail.toName,
+                pathParameters: {"id": item.id.toString()});
+          },
           borderRadius: const BorderRadius.all(Radius.circular(15.0)),
           child: Container(
             margin: const EdgeInsets.all(5.0),
@@ -97,7 +101,8 @@ List<Widget> imageSliders(List<CarouselProps> data) {
               borderRadius: const BorderRadius.all(Radius.circular(15.0)),
               child: Stack(
                 children: <Widget>[
-                  Image.network(item.img, fit: BoxFit.cover, width: 1000.0),
+                  Image.network(dotenv.env['IMG_URL']! + item.gambar!,
+                      fit: BoxFit.cover, width: 1000.0),
                   Positioned(
                     bottom: 0.0,
                     left: 0.0,
@@ -118,39 +123,15 @@ List<Widget> imageSliders(List<CarouselProps> data) {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Text(
-                                item.author,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              const Text(
-                                "•",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 13,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              const Text(
-                                "2023-10-01",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                ),
-                              ),
-                            ],
+                          Text(
+                            item.author ?? "Katuturang",
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                            ),
                           ),
                           Text(
-                            item.title,
+                            item.judul ?? "Katuturang",
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 20.0,

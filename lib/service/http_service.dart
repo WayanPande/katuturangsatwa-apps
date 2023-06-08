@@ -45,6 +45,19 @@ class HttpService {
     }
   }
 
+  Future<List<dynamic>> getStoriesLatest([int limit = 5]) async {
+    final String storyURL;
+    storyURL = "${dotenv.env['API_URL']}api/v1/stories/latest?limit=$limit";
+    http.Response res = await http.get(Uri.parse(storyURL));
+
+    if (res.statusCode == 200) {
+      List<dynamic> body = jsonDecode(res.body);
+      return body;
+    } else {
+      throw "Unable to retrieve posts.";
+    }
+  }
+
   Future<Map<String, dynamic>> getUserData(int id) async {
     final String URL;
     URL = "${dotenv.env['API_URL']}api/v1/user/$id";

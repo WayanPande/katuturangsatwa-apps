@@ -8,10 +8,15 @@ import '../service/http_service.dart';
 
 class Stories with ChangeNotifier {
   List<Story> _storyList = [];
+  List<Story> _storyListLatest = [];
   StoryDetail? _storyDetail;
 
   List<Story> get storyList {
     return [..._storyList];
+  }
+
+  List<Story> get storyListLatest {
+    return [..._storyListLatest];
   }
 
   StoryDetail? get storyDetail {
@@ -23,6 +28,18 @@ class Stories with ChangeNotifier {
       var data = await HttpService().getStories();
       var finalData = data.map((e) => Story.fromJson(e)).toList();
       _storyList = finalData;
+
+    } catch (error) {
+      rethrow;
+    }
+    notifyListeners();
+  }
+
+  Future<void> getStoriesLatest() async {
+    try {
+      var data = await HttpService().getStoriesLatest();
+      var finalData = data.map((e) => Story.fromJson(e)).toList();
+      _storyListLatest = finalData;
 
     } catch (error) {
       rethrow;
