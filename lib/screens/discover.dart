@@ -3,7 +3,9 @@ import 'package:flutter_sticky_widgets/flutter_sticky_widgets.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:katuturangsatwa/service/http_service.dart';
 import 'package:katuturangsatwa/util/data_class.dart';
+import 'package:provider/provider.dart';
 
+import '../providers/stories.dart';
 import '../widgets/dashboard_card.dart';
 import '../widgets/tag_card.dart';
 
@@ -21,6 +23,7 @@ class _DiscoverState extends State<Discover> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _focus = FocusNode();
   static const _pageSize = 20;
+  List<Categories> _categoriesList = [];
 
   final PagingController<int, Story> _pagingController =
       PagingController(firstPageKey: 1);
@@ -29,6 +32,9 @@ class _DiscoverState extends State<Discover> {
   void initState() {
     _pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
+    });
+    Future.delayed(Duration.zero).then((_) {
+      Provider.of<Stories>(context, listen: false).getCategories();
     });
     super.initState();
   }
@@ -61,7 +67,9 @@ class _DiscoverState extends State<Discover> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    var story = Provider.of<Stories>(context);
+    _categoriesList = story.categoryList;
+
     return Scaffold(
       body: StickyContainer(
         displayOverFlowContent: false,
@@ -187,11 +195,11 @@ class _DiscoverState extends State<Discover> {
                                   mainAxisSpacing: 10,
                                   childAspectRatio: 3,
                                   children: List.generate(
-                                    25,
+                                    _categoriesList.length,
                                     (index) => TagCard(
                                       key: Key("tagCard-$index"),
-                                      id: index,
-                                      label: "Kategori $index",
+                                      id: _categoriesList[index].id!,
+                                      label: _categoriesList[index].name ?? "",
                                     ),
                                   ),
                                 ),

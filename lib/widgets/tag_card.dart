@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:katuturangsatwa/router/route_utils.dart';
 
 class TagCard extends StatelessWidget {
   final String label;
@@ -15,7 +17,9 @@ class TagCard extends StatelessWidget {
           .withOpacity(0.2),
       borderRadius: BorderRadius.circular(5),
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          context.pushNamed(APP_PAGE.categoriesDetail.toName, pathParameters: {"id": id.toString()});
+        },
         borderRadius: BorderRadius.circular(5),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),

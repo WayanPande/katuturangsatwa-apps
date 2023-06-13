@@ -122,3 +122,29 @@ class User {
   }
 }
 
+class Categories {
+  Null? akses;
+  String? gambar;
+  int? id;
+  String? name;
+
+  Categories({this.akses, this.gambar, this.id, this.name});
+
+  Categories.fromJson(Map<String, dynamic> json) {
+    akses = json['akses'];
+    gambar = json['gambar'];
+    id = json['id'];
+    name = json['name'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['akses'] = this.akses;
+    data['gambar'] = this.gambar;
+    data['id'] = this.id;
+    data['name'] = this.name;
+    return data;
+  }
+}
+
+

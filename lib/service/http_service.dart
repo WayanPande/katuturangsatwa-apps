@@ -91,4 +91,19 @@ class HttpService {
       throw "Unable to login.";
     }
   }
+
+  Future<List<dynamic>> getCategories() async {
+    final String URL;
+    URL = "${dotenv.env['API_URL']}api/v1/categories";
+    http.Response res = await http.get(Uri.parse(URL));
+
+    if (res.statusCode == 200) {
+      List<dynamic>body = jsonDecode(res.body);
+      return body;
+    } else {
+      throw "Unable to retrieve categories.";
+    }
+  }
+
+
 }

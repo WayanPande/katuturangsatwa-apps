@@ -16,6 +16,7 @@ import 'package:katuturangsatwa/screens/story_input.dart';
 import 'package:katuturangsatwa/screens/write.dart';
 import 'package:katuturangsatwa/widgets/scaffold_bottom_navbar.dart';
 
+import '../screens/categories_detail.dart';
 import '../screens/onboarding.dart';
 import '../config/AppRouter.dart';
 import '../widgets/scaffold_with_navbar_tabitem.dart';
@@ -194,6 +195,21 @@ class AppRouter {
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const OnBoardingPage(),
         pageBuilder: defaultPageBuilder(const OnBoardingPage()),
+      ),
+      GoRoute(
+        path: "${APP_PAGE.categoriesDetail.toPath}/:id",
+        name: APP_PAGE.categoriesDetail.toName,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (BuildContext context, GoRouterState state) {
+          return CategoriesDetail(
+            id: state.pathParameters['id'] ?? "",
+          );
+        },
+        pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
+          context: context,
+          state: state,
+          child: CategoriesDetail(id: state.pathParameters["id"] ?? ""),
+        ),
       ),
     ],
     redirect: (BuildContext context, GoRouterState state) {

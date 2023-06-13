@@ -10,7 +10,8 @@ enum APP_PAGE {
   storyDetail,
   reader,
   write,
-  storyInput
+  storyInput,
+  categoriesDetail
 }
 
 extension AppPageExtension on APP_PAGE {
@@ -40,6 +41,8 @@ extension AppPageExtension on APP_PAGE {
         return "/write";
       case APP_PAGE.storyInput:
         return "/story-input";
+      case APP_PAGE.categoriesDetail:
+        return "/categories-detail";
       default:
         return "/";
     }
@@ -71,6 +74,8 @@ extension AppPageExtension on APP_PAGE {
         return "WRITE";
       case APP_PAGE.storyInput:
         return "STORYINPUT";
+      case APP_PAGE.categoriesDetail:
+        return "CATEGORIESDETAIL";
       default:
         return "";
     }
