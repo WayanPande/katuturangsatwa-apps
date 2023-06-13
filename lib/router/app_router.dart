@@ -197,18 +197,22 @@ class AppRouter {
         pageBuilder: defaultPageBuilder(const OnBoardingPage()),
       ),
       GoRoute(
-        path: "${APP_PAGE.categoriesDetail.toPath}/:id",
+        path: APP_PAGE.categoriesDetail.toPath,
         name: APP_PAGE.categoriesDetail.toName,
         parentNavigatorKey: _rootNavigatorKey,
         builder: (BuildContext context, GoRouterState state) {
           return CategoriesDetail(
-            id: state.pathParameters['id'] ?? "",
+            id: state.queryParameters['id'] ?? "",
+            title: state.queryParameters['title'] ?? "",
           );
         },
         pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
           context: context,
           state: state,
-          child: CategoriesDetail(id: state.pathParameters["id"] ?? ""),
+          child: CategoriesDetail(
+            id: state.queryParameters["id"] ?? "",
+            title: state.queryParameters['title'] ?? "",
+          ),
         ),
       ),
     ],

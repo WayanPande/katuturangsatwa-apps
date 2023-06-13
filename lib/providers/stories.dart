@@ -11,9 +11,14 @@ class Stories with ChangeNotifier {
   List<Story> _storyListLatest = [];
   StoryDetail? _storyDetail;
   List<Categories> _categoryList = [];
+  List<Story> _storyListCategory = [];
 
   List<Categories> get categoryList {
     return [..._categoryList];
+  }
+
+  List<Story> get storyListCategory {
+    return [..._storyListCategory];
   }
 
   List<Story> get storyList {
@@ -67,6 +72,18 @@ class Stories with ChangeNotifier {
       var data = await HttpService().getCategories();
       var finalData = data.map((e) => Categories.fromJson(e)).toList();
       _categoryList = finalData;
+
+    } catch (error) {
+      rethrow;
+    }
+    notifyListeners();
+  }
+
+  Future<void> getStoriesPerCategory(String id) async {
+    try {
+      var data = await HttpService().getStoriesPerCategory(id);
+      var finalData = data.map((e) => Story.fromJson(e)).toList();
+      _storyListCategory = finalData;
 
     } catch (error) {
       rethrow;

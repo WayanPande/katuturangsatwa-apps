@@ -18,7 +18,7 @@ class TagCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(5),
       child: InkWell(
         onTap: () {
-          context.pushNamed(APP_PAGE.categoriesDetail.toName, pathParameters: {"id": id.toString()});
+          context.pushNamed(APP_PAGE.categoriesDetail.toName, queryParameters: {"id": id.toString(), "title": label});
         },
         borderRadius: BorderRadius.circular(5),
         child: Container(
