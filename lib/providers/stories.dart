@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:katuturangsatwa/util/data_class.dart';
 
 import '../service/http_service.dart';
+import '../util/sharedPreferences.dart';
 
 class Stories with ChangeNotifier {
   List<Story> _storyList = [];
@@ -12,6 +13,11 @@ class Stories with ChangeNotifier {
   StoryDetail? _storyDetail;
   List<Categories> _categoryList = [];
   List<Story> _storyListCategory = [];
+  List<Story> _storyListWriter = [];
+
+  List<Story> get storyListWriter{
+    return [..._storyListWriter];
+  }
 
   List<Categories> get categoryList {
     return [..._categoryList];
@@ -84,6 +90,19 @@ class Stories with ChangeNotifier {
       var data = await HttpService().getStoriesPerCategory(id);
       var finalData = data.map((e) => Story.fromJson(e)).toList();
       _storyListCategory = finalData;
+
+    } catch (error) {
+      rethrow;
+    }
+    notifyListeners();
+  }
+
+  Future<void> getStoriesWriter() async {
+    try {
+      var id = await getUserId();
+      var data = await HttpService().getStoriesWriter(id.toString());
+      var finalData = data.map((e) => Story.fromJson(e)).toList();
+      _storyListWriter = finalData;
 
     } catch (error) {
       rethrow;

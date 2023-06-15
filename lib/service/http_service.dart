@@ -118,5 +118,18 @@ class HttpService {
     }
   }
 
+  Future<List<dynamic>> getStoriesWriter(String id) async {
+    final String URL;
+    URL = "${dotenv.env['API_URL']}api/v1/stories/writer/$id";
+    http.Response res = await http.get(Uri.parse(URL));
+
+    if (res.statusCode == 200) {
+      List<dynamic>body = jsonDecode(res.body);
+      return body;
+    } else {
+      throw "Unable to retrieve stories.";
+    }
+  }
+
 
 }
