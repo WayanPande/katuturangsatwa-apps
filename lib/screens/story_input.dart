@@ -1,7 +1,14 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+
+import 'package:katuturangsatwa/service/http_service.dart';
+import 'package:katuturangsatwa/util/data_class.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/users.dart';
 
 class StoryInput extends StatefulWidget {
   StoryInput({Key? key}) : super(key: key);
@@ -16,6 +23,7 @@ class _StoryInputState extends State<StoryInput> {
   TextEditingController title = TextEditingController();
   TextEditingController desc = TextEditingController();
   XFile? image;
+  final _formKey = GlobalKey<FormState>();
 
   final ImagePicker picker = ImagePicker();
 
@@ -29,6 +37,7 @@ class _StoryInputState extends State<StoryInput> {
 
   @override
   void initState() {
+    Provider.of<Users>(context, listen: false).getUserData();
     super.initState();
   }
 
@@ -118,18 +127,87 @@ class _StoryInputState extends State<StoryInput> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    final user = Provider.of<Users>(context).user;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Write your story"),
         actions: [
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              if (_formKey.currentState!.validate() && user != null) {
+                HttpService()
+                    .registerStory(RegisterStory(
+                        judul_satwa: title.text,
+                        text_satwa: desc.text,
+                        penulis_satwa: user.id.toString(),
+                        img_satwa: File(image!.path)))
+                    .then((value) => {
+                          if (value == 200)
+                            {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(
+                                    SnackBar(
+                                      content: WillPopScope(
+                                        onWillPop: () async {
+                                          return true;
+                                        },
+                                        child: const Text(
+                                            'Success adding new story!'),
+                                      ),
+                                      duration:
+                                          const Duration(milliseconds: 1700),
+                                      width: MediaQuery.of(context).size.width *
+                                          0.7,
+                                      backgroundColor:
+                                          Theme.of(context).primaryColor,
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                      ),
+                                    ),
+                                  )
+                                  .closed
+                                  .then((value) => context.pop())
+                            }
+                          else
+                            {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(
+                                    SnackBar(
+                                      content: WillPopScope(
+                                        onWillPop: () async {
+                                          return true;
+                                        },
+                                        child: const Text(
+                                            'Fail adding new story!'),
+                                      ),
+                                      duration:
+                                          const Duration(milliseconds: 2000),
+                                      width: MediaQuery.of(context).size.width *
+                                          0.7,
+                                      backgroundColor: Colors.redAccent,
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                      ),
+                                    ),
+                                  )
+                                  .closed
+                                  .then((value) => context.pop())
+                            }
+                        });
+              }
+            },
             child: const Text("PUBLISH"),
           ),
         ],
       ),
       body: SingleChildScrollView(
+          child: Form(
+        key: _formKey,
         child: Column(
           children: [
             Padding(
@@ -204,6 +282,14 @@ class _StoryInputState extends State<StoryInput> {
                       labelText: "Story Title",
                     ),
                     controller: title,
+                    validator: (value) {
+                      if (value != null) {
+                        if (value.isEmpty) {
+                          return "Story Title cannot be empty";
+                        }
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(
                     height: 10,
@@ -215,13 +301,21 @@ class _StoryInputState extends State<StoryInput> {
                     ),
                     maxLines: null,
                     controller: desc,
+                    validator: (value) {
+                      if (value != null) {
+                        if (value.isEmpty) {
+                          return "Story Description cannot be empty";
+                        }
+                      }
+                      return null;
+                    },
                   ),
                 ],
               ),
             ),
           ],
         ),
-      ),
+      )),
     );
   }
 }

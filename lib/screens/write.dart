@@ -47,10 +47,6 @@ class _WriteState extends State<Write> {
     final story = Provider.of<Stories>(context).storyListWriter;
     const duration = Duration(milliseconds: 300);
 
-    if (appService.loginState) {
-      _fetchPage();
-    }
-
     return !appService.loginState
         ? const RedirectLogin()
         : Scaffold(
@@ -71,60 +67,70 @@ class _WriteState extends State<Write> {
                 ),
               ),
             ),
-            body: NotificationListener<UserScrollNotification>(
-              onNotification: (notification) {
-                final ScrollDirection direction = notification.direction;
-                setState(() {
-                  if (direction == ScrollDirection.reverse) {
-                    _showFab = true;
-                  } else if (notification.metrics.pixels == 0) {
-                    _showFab = false;
-                  }
+            body: RefreshIndicator(
+              onRefresh: () {
+                return Future.delayed(Duration.zero).then((_) {
+                  Provider.of<Stories>(context, listen: false)
+                      .getStoriesWriter();
                 });
-                return true;
               },
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ListTile(
-                      title: const Text("Create a new story"),
-                      onTap: () {
-                        context.pushNamed(APP_PAGE.storyInput.toName);
-                      },
-                      leading: const Icon(Icons.note_add),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Text(
-                        "My Story",
-                        style: TextStyle(
-                          fontSize: 18,
+              child: NotificationListener<UserScrollNotification>(
+                onNotification: (notification) {
+                  final ScrollDirection direction = notification.direction;
+                  setState(() {
+                    if (direction == ScrollDirection.reverse) {
+                      _showFab = true;
+                    } else if (notification.metrics.pixels == 0) {
+                      _showFab = false;
+                    }
+                  });
+                  return true;
+                },
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ListTile(
+                        title: const Text("Create a new story"),
+                        onTap: () {
+                          context.pushNamed(APP_PAGE.storyInput.toName);
+                        },
+                        leading: const Icon(Icons.note_add),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.all(20),
+                        child: Text(
+                          "My Story",
+                          style: TextStyle(
+                            fontSize: 18,
+                          ),
                         ),
                       ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      child: Column(
-                        children: List.generate(
-                          story.length,
-                          (index) {
-                            return WriteStoryCard(
-                              title: story[index].judul ?? "katuturangsatwa",
-                              img: story[index].gambar!,
-                              author: story[index].author ?? "katuturangsatwa",
-                              id: story[index].id!,
-                            );
-                          },
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        child: Column(
+                          children: List.generate(
+                            story.length,
+                            (index) {
+                              return WriteStoryCard(
+                                title: story[index].judul ?? "katuturangsatwa",
+                                img: story[index].gambar!,
+                                author:
+                                    story[index].author ?? "katuturangsatwa",
+                                id: story[index].id!,
+                              );
+                            },
+                          ),
                         ),
-                      ),
-                    )
-                  ],
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ));
+            ),
+          );
   }
 }

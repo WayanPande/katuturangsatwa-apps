@@ -1,14 +1,12 @@
+import 'dart:io';
+
 class Story {
   int? id;
   String? judul;
   String? gambar;
   String? author;
 
-  Story(
-      {this.id,
-      this.judul,
-      this.gambar,
-      this.author});
+  Story({this.id, this.judul, this.gambar, this.author});
 
   Story.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -39,13 +37,13 @@ class StoryDetail {
 
   StoryDetail(
       {this.author,
-        this.gambar,
-        this.id,
-        this.judul,
-        this.kategori,
-        this.ringkas,
-        this.text,
-        this.tokoh});
+      this.gambar,
+      this.id,
+      this.judul,
+      this.kategori,
+      this.ringkas,
+      this.text,
+      this.tokoh});
 
   StoryDetail.fromJson(Map<String, dynamic> json) {
     author = json['author'];
@@ -73,7 +71,6 @@ class StoryDetail {
 }
 
 class LoginData {
-
   final String username, password;
 
   LoginData({
@@ -83,15 +80,26 @@ class LoginData {
 }
 
 class RegisterData {
-
   final String username, password, name, email;
 
-  RegisterData({
-    required this.username,
-    required this.password,
-    required this.email,
-    required this.name
-  });
+  RegisterData(
+      {required this.username,
+      required this.password,
+      required this.email,
+      required this.name});
+}
+
+class RegisterStory {
+  final String judul_satwa, text_satwa, penulis_satwa;
+  final File img_satwa;
+
+  // final int penulis_satwa;
+
+  RegisterStory(
+      {required this.judul_satwa,
+      required this.text_satwa,
+      required this.penulis_satwa,
+      required this.img_satwa});
 }
 
 class User {
@@ -146,5 +154,3 @@ class Categories {
     return data;
   }
 }
-
-

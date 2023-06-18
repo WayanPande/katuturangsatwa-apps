@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:katuturangsatwa/util/data_class.dart';
 
 
@@ -131,5 +132,34 @@ class HttpService {
     }
   }
 
+  Future<int> registerStory(RegisterStory data) async {
+    final String URL;
+    URL = "${dotenv.env['API_URL']}api/v1/submit_satwa";
+    Map<String,String> headers={
+      "Content-type": "multipart/form-data"
+    };
+
+    var request = http.MultipartRequest(
+      'POST', Uri.parse(URL),
+    );
+    request.headers.addAll(headers);
+    request.files.add(
+      http.MultipartFile(
+          'img_satwa',
+          data.img_satwa.readAsBytes().asStream(),
+          data.img_satwa.lengthSync(),
+          filename: "test${data.img_satwa.path.split('/').last}",
+          contentType: MediaType('image','png')
+      ),
+    );
+
+    request.fields["judul_satwa"] = data.judul_satwa;
+    request.fields["text_satwa"]= data.text_satwa;
+    request.fields["penulis_satwa"]= data.penulis_satwa;
+
+    var res = await request.send();
+
+    return res.statusCode;
+  }
 
 }
