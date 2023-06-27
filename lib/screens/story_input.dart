@@ -8,10 +8,13 @@ import 'package:katuturangsatwa/service/http_service.dart';
 import 'package:katuturangsatwa/util/data_class.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/stories.dart';
 import '../providers/users.dart';
 
 class StoryInput extends StatefulWidget {
-  StoryInput({Key? key}) : super(key: key);
+  final String? id;
+
+  StoryInput({Key? key, this.id}) : super(key: key);
 
   @override
   _StoryInputState createState() {
@@ -38,6 +41,12 @@ class _StoryInputState extends State<StoryInput> {
   @override
   void initState() {
     Provider.of<Users>(context, listen: false).getUserData();
+    if (widget.id != null) {
+      Future.delayed(Duration.zero).then((_) {
+        Provider.of<Stories>(context, listen: false)
+            .getStoryDetail(int.parse(widget.id!));
+      });
+    }
     super.initState();
   }
 
@@ -128,80 +137,177 @@ class _StoryInputState extends State<StoryInput> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<Users>(context).user;
+    var story = Provider.of<Stories>(context).storyDetail;
+
+    if (widget.id != null) {
+      title.text = story?.judul ?? "";
+      desc.text = story?.text ?? "";
+    }
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Write your story"),
         actions: [
-          TextButton(
-            onPressed: () {
-              if (_formKey.currentState!.validate() && user != null) {
-                HttpService()
-                    .registerStory(RegisterStory(
-                        judul_satwa: title.text,
-                        text_satwa: desc.text,
-                        penulis_satwa: user.id.toString(),
-                        img_satwa: File(image!.path)))
-                    .then((value) => {
-                          if (value == 200)
-                            {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(
-                                    SnackBar(
-                                      content: WillPopScope(
-                                        onWillPop: () async {
-                                          return true;
-                                        },
-                                        child: const Text(
-                                            'Success adding new story!'),
+          Visibility(
+            visible: widget.id == null,
+            child: TextButton(
+              onPressed: () {
+                if (_formKey.currentState!.validate() && user != null) {
+                  HttpService()
+                      .registerStory(RegisterStory(
+                          judul_satwa: title.text,
+                          text_satwa: desc.text,
+                          penulis_satwa: user.id.toString(),
+                          img_satwa: File(image!.path)))
+                      .then((value) => {
+                            if (value == 200)
+                              {
+                                Future.delayed(Duration.zero).then((_) {
+                                  Provider.of<Stories>(context, listen: false)
+                                      .getStoriesWriter();
+                                }),
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(
+                                      SnackBar(
+                                        content: WillPopScope(
+                                          onWillPop: () async {
+                                            return true;
+                                          },
+                                          child: const Text(
+                                              'Success adding new story!'),
+                                        ),
+                                        duration:
+                                            const Duration(milliseconds: 1700),
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.7,
+                                        backgroundColor:
+                                            Theme.of(context).primaryColor,
+                                        behavior: SnackBarBehavior.floating,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                        ),
                                       ),
-                                      duration:
-                                          const Duration(milliseconds: 1700),
-                                      width: MediaQuery.of(context).size.width *
-                                          0.7,
-                                      backgroundColor:
-                                          Theme.of(context).primaryColor,
-                                      behavior: SnackBarBehavior.floating,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
+                                    )
+                                    .closed
+                                    .then((value) => context.pop())
+                              }
+                            else
+                              {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(
+                                      SnackBar(
+                                        content: WillPopScope(
+                                          onWillPop: () async {
+                                            return true;
+                                          },
+                                          child: const Text(
+                                              'Fail adding new story!'),
+                                        ),
+                                        duration:
+                                            const Duration(milliseconds: 2000),
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.7,
+                                        backgroundColor: Colors.redAccent,
+                                        behavior: SnackBarBehavior.floating,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                        ),
                                       ),
-                                    ),
-                                  )
-                                  .closed
-                                  .then((value) => context.pop())
-                            }
-                          else
-                            {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(
-                                    SnackBar(
-                                      content: WillPopScope(
-                                        onWillPop: () async {
-                                          return true;
-                                        },
-                                        child: const Text(
-                                            'Fail adding new story!'),
+                                    )
+                                    .closed
+                                    .then((value) => context.pop())
+                              }
+                          });
+                }
+              },
+              child: const Text("PUBLISH"),
+            ),
+          ),
+          Visibility(
+            visible: widget.id != null,
+            child: TextButton(
+              onPressed: () {
+                if (_formKey.currentState!.validate() && user != null) {
+                  HttpService()
+                      .updateStory(
+                        UpdateStory(
+                          judul_satwa: title.text,
+                          text_satwa: desc.text,
+                          id: widget.id.toString(),
+                          img_satwa: image != null ? File(image!.path) : null,
+                        ),
+                      )
+                      .then((value) => {
+                            if (value == 200)
+                              {
+                                Future.delayed(Duration.zero).then((_) {
+                                  Provider.of<Stories>(context, listen: false)
+                                      .getStoriesWriter();
+                                }),
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(
+                                      SnackBar(
+                                        content: WillPopScope(
+                                          onWillPop: () async {
+                                            return true;
+                                          },
+                                          child: const Text(
+                                              'Success updating story!'),
+                                        ),
+                                        duration:
+                                            const Duration(milliseconds: 1700),
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.7,
+                                        backgroundColor:
+                                            Theme.of(context).primaryColor,
+                                        behavior: SnackBarBehavior.floating,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                        ),
                                       ),
-                                      duration:
-                                          const Duration(milliseconds: 2000),
-                                      width: MediaQuery.of(context).size.width *
-                                          0.7,
-                                      backgroundColor: Colors.redAccent,
-                                      behavior: SnackBarBehavior.floating,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
+                                    )
+                                    .closed
+                                    .then((value) => context.pop())
+                              }
+                            else
+                              {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(
+                                      SnackBar(
+                                        content: WillPopScope(
+                                          onWillPop: () async {
+                                            return true;
+                                          },
+                                          child: const Text(
+                                              'Fail updating story!'),
+                                        ),
+                                        duration:
+                                            const Duration(milliseconds: 2000),
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.7,
+                                        backgroundColor: Colors.redAccent,
+                                        behavior: SnackBarBehavior.floating,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                        ),
                                       ),
-                                    ),
-                                  )
-                                  .closed
-                                  .then((value) => context.pop())
-                            }
-                        });
-              }
-            },
-            child: const Text("PUBLISH"),
+                                    )
+                                    .closed
+                                    .then((value) => context.pop())
+                              }
+                          });
+                }
+              },
+              child: const Text("UPDATE"),
+            ),
           ),
         ],
       ),

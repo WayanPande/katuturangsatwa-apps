@@ -102,6 +102,19 @@ class RegisterStory {
       required this.img_satwa});
 }
 
+class UpdateStory {
+  final String judul_satwa, text_satwa, id;
+  final File? img_satwa;
+
+  // final int penulis_satwa;
+
+  UpdateStory(
+      {required this.judul_satwa,
+        required this.text_satwa,
+        required this.id,
+        this.img_satwa});
+}
+
 class User {
   String? email;
   String? gambar;

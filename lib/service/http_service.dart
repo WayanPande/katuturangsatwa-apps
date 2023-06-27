@@ -162,4 +162,46 @@ class HttpService {
     return res.statusCode;
   }
 
+  Future<int> updateStory(UpdateStory data) async {
+    final String URL;
+    URL = "${dotenv.env['API_URL']}api/v1/update_satwa";
+    Map<String,String> headers={
+      "Content-type": "multipart/form-data"
+    };
+
+    var request = http.MultipartRequest(
+      'PUT', Uri.parse(URL),
+    );
+    request.headers.addAll(headers);
+
+    final img_satwa = data.img_satwa;
+    if(img_satwa != null){
+      request.files.add(
+        http.MultipartFile(
+            'img_satwa',
+            img_satwa.readAsBytes().asStream(),
+            img_satwa.lengthSync(),
+            filename: "test${img_satwa.path.split('/').last}",
+            contentType: MediaType('image', "jpg")
+        ),
+      );
+    }
+
+    request.fields["judul_satwa"] = data.judul_satwa;
+    request.fields["text_satwa"]= data.text_satwa;
+    request.fields["id"]= data.id;
+
+    var res = await request.send();
+
+    return res.statusCode;
+  }
+
+  Future<int> deleteStory(String id) async {
+    final String URL;
+    URL = "${dotenv.env['API_URL']}api/v1/delete_satwa/$id";
+    http.Response res = await http.delete(Uri.parse(URL));
+
+    return res.statusCode;
+  }
+
 }

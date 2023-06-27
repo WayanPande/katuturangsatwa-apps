@@ -142,9 +142,13 @@ class AppRouter {
         name: APP_PAGE.storyInput.toName,
         parentNavigatorKey: _rootNavigatorKey,
         builder: (BuildContext context, GoRouterState state) {
-          return StoryInput();
+          return StoryInput(id: state.queryParameters['id']);
         },
-        pageBuilder: defaultPageBuilder(StoryInput()),
+        pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
+          context: context,
+          state: state,
+          child: StoryInput(id: state.queryParameters['id']),
+        ),
       ),
       GoRoute(
         path: "${APP_PAGE.storyDetail.toPath}/:id",
