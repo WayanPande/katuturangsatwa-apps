@@ -10,7 +10,6 @@ import 'package:katuturangsatwa/screens/login.dart';
 import 'package:katuturangsatwa/screens/profile.dart';
 import 'package:katuturangsatwa/screens/reader.dart';
 import 'package:katuturangsatwa/screens/register.dart';
-import 'package:katuturangsatwa/screens/splashscreen.dart';
 import 'package:katuturangsatwa/screens/story_detail.dart';
 import 'package:katuturangsatwa/screens/story_input.dart';
 import 'package:katuturangsatwa/screens/write.dart';
@@ -185,15 +184,6 @@ class AppRouter {
         ),
       ),
       GoRoute(
-        path: APP_PAGE.splash.toPath,
-        name: APP_PAGE.splash.toName,
-        parentNavigatorKey: _rootNavigatorKey,
-        builder: (BuildContext context, GoRouterState state) {
-          return const SplashPage();
-        },
-        pageBuilder: defaultPageBuilder(const SplashPage()),
-      ),
-      GoRoute(
         path: APP_PAGE.onBoarding.toPath,
         name: APP_PAGE.onBoarding.toName,
         parentNavigatorKey: _rootNavigatorKey,
@@ -223,38 +213,28 @@ class AppRouter {
     redirect: (BuildContext context, GoRouterState state) {
       final loginLocation = state.namedLocation(APP_PAGE.login.toName);
       final homeLocation = state.namedLocation(APP_PAGE.home.toName);
-      final splashLocation = state.namedLocation(APP_PAGE.splash.toName);
       final onboardLocation = state.namedLocation(APP_PAGE.onBoarding.toName);
       final registerLocation = state.namedLocation(APP_PAGE.register.toName);
 
       final isLogedIn = appService.loginState;
-      final isInitialized = appService.initialized;
       final isOnboarded = appService.onboarding;
 
       final isGoingToLogin = state.matchedLocation == loginLocation;
-      final isGoingToInit = state.matchedLocation == splashLocation;
       final isGoingToOnboard = state.matchedLocation == onboardLocation;
       final isGoingToRegister = state.matchedLocation == registerLocation;
 
-      // If not Initialized and not going to Initialized redirect to Splash
-      if (!isInitialized && !isGoingToInit) {
-        return splashLocation;
-        // If not onboard and not going to onboard redirect to OnBoarding
-      }
-      if (isInitialized && !isOnboarded && !isGoingToOnboard) {
+      if (!isOnboarded && !isGoingToOnboard) {
         return onboardLocation;
         // If not logedin and not going to login redirect to Login
       }
 
-      if (isInitialized && isOnboarded && isGoingToLogin) {
+      if (isOnboarded && isGoingToLogin) {
         if (isGoingToRegister) return registerLocation;
         return loginLocation;
         // If all the scenarios are cleared but still going to any of that screen redirect to Home
       }
 
-      if ((isLogedIn && isGoingToLogin) ||
-          (isInitialized && isGoingToInit) ||
-          (isOnboarded && isGoingToOnboard)) {
+      if ((isLogedIn && isGoingToLogin) || (isOnboarded && isGoingToOnboard)) {
         return homeLocation;
       }
 

@@ -57,11 +57,16 @@ class _MyAppState extends State<MyApp> {
     authSubscription = authService.onAuthStateChange.listen(onAuthStateChange);
     stories = Stories();
     user = Users();
+    onStartUp();
     super.initState();
   }
 
   void onAuthStateChange(bool login) {
     appService.loginState = login;
+  }
+
+  void onStartUp() async {
+    await appService.onAppStart();
   }
 
   @override

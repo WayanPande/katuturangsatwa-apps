@@ -12,13 +12,11 @@ class AppService with ChangeNotifier {
   late final SharedPreferences sharedPreferences;
   final StreamController<bool> _loginStateChange = StreamController<bool>.broadcast();
   bool _loginState = false;
-  bool _initialized = false;
   bool _onboarding = false;
 
   AppService(this.sharedPreferences);
 
   bool get loginState => _loginState;
-  bool get initialized => _initialized;
   bool get onboarding => _onboarding;
   Stream<bool> get loginStateChange => _loginStateChange.stream;
 
@@ -26,11 +24,6 @@ class AppService with ChangeNotifier {
     sharedPreferences.setBool(LOGIN_KEY, state);
     _loginState = state;
     _loginStateChange.add(state);
-    notifyListeners();
-  }
-
-  set initialized(bool value) {
-    _initialized = value;
     notifyListeners();
   }
 
@@ -43,12 +36,6 @@ class AppService with ChangeNotifier {
   Future<void> onAppStart() async {
     _onboarding = sharedPreferences.getBool(ONBOARD_KEY) ?? false;
     _loginState = sharedPreferences.getBool(LOGIN_KEY) ?? false;
-
-    // This is just to demonstrate the splash screen is working.
-    // In real-life applications, it is not recommended to interrupt the user experience by doing such things.
-    await Future.delayed(const Duration(seconds: 2));
-
-    _initialized = true;
     notifyListeners();
   }
 }
