@@ -63,13 +63,26 @@ class DashboardStoryCard extends StatelessWidget {
                                 width: 20,
                                 height: 20,
                                 decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    fit: BoxFit.cover,
-                                    image: NetworkImage(
-                                      getImageUrl(author),
-                                    ),
-                                  ),
                                   borderRadius: BorderRadius.circular(15),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(15),
+                                  child: Image.network(
+                                    getImageUrl(author),
+                                    fit: BoxFit.fill,
+                                    loadingBuilder: (BuildContext context, Widget child,
+                                        ImageChunkEvent? loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Center(
+                                        child: CircularProgressIndicator(
+                                          value: loadingProgress.expectedTotalBytes != null
+                                              ? loadingProgress.cumulativeBytesLoaded /
+                                              loadingProgress.expectedTotalBytes!
+                                              : null,
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 ),
                               ),
                               const SizedBox(
@@ -91,17 +104,30 @@ class DashboardStoryCard extends StatelessWidget {
                   Container(
                     width: MediaQuery.of(context).size.width / 3,
                     height: 100,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: NetworkImage(
-                          dotenv.env['IMG_URL']! + img,
-                        ),
-                      ),
-                      borderRadius: const BorderRadius.all(
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(
                         Radius.circular(10),
                       ),
                     ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.network(
+                        dotenv.env['IMG_URL']! + img,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (BuildContext context, Widget child,
+                            ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                  loadingProgress.expectedTotalBytes!
+                                  : null,
+                            ),
+                          );
+                        },
+                      ),
+                    )
                   ),
                 ],
               ),

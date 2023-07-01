@@ -49,7 +49,7 @@ class _StoryDetailState extends State<StoryDetail> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Story Detail",
         ),
         centerTitle: true,
@@ -129,7 +129,7 @@ class _StoryDetailState extends State<StoryDetail> {
                         ),
                         Text(
                           story?.author ?? "",
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.grey,
                           ),
                         ),
@@ -143,15 +143,28 @@ class _StoryDetailState extends State<StoryDetail> {
                     child: Container(
                       width: MediaQuery.of(context).size.width * 0.9,
                       height: 250,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(
-                            dotenv.env['IMG_URL']! + (story?.gambar ?? ""),
-                          ),
-                        ),
-                        borderRadius: const BorderRadius.all(
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(
                           Radius.circular(10),
+                        ),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.network(
+                          dotenv.env['IMG_URL']! + (story?.gambar ?? ""),
+                          fit: BoxFit.cover,
+                          loadingBuilder: (BuildContext context, Widget child,
+                              ImageChunkEvent? loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Center(
+                              child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),

@@ -101,8 +101,23 @@ List<Widget> imageSliders(List<Story> data, BuildContext context) {
               borderRadius: const BorderRadius.all(Radius.circular(15.0)),
               child: Stack(
                 children: <Widget>[
-                  Image.network(dotenv.env['IMG_URL']! + item.gambar!,
-                      fit: BoxFit.cover, width: 1000.0),
+                  Image.network(
+                    dotenv.env['IMG_URL']! + item.gambar!,
+                    fit: BoxFit.cover,
+                    width: 1000.0,
+                    loadingBuilder: (BuildContext context, Widget child,
+                        ImageChunkEvent? loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                  loadingProgress.expectedTotalBytes!
+                              : null,
+                        ),
+                      );
+                    },
+                  ),
                   Positioned(
                     bottom: 0.0,
                     left: 0.0,
