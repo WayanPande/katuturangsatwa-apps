@@ -13,7 +13,7 @@ class AuthService {
 
   Stream<bool> get onAuthStateChange => _onAuthStateChange.stream;
 
-  Future<bool> login(LoginData data) async {
+  Future<Map<String, dynamic>> login(LoginData data) async {
     // This is just to demonstrate the login process time.
     // In real-life applications, it is not recommended to interrupt the user experience by doing such things.
     final String storyURL;
@@ -25,15 +25,13 @@ class AuthService {
         "password": data.password
       },
     );
-
+    Map<String, dynamic> body = jsonDecode(res.body);
     if (res.statusCode == 200) {
-      Map<String, dynamic> body = jsonDecode(res.body);
-      addUserId(body['id']);
-    } else {
-      throw "Unable to login.";
+      addUserId(body['data']['id']);
+      _onAuthStateChange.add(true);
     }
-    _onAuthStateChange.add(true);
-    return true;
+
+    return body;
   }
 
   void logOut() {

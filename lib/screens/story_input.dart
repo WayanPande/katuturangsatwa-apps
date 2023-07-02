@@ -27,6 +27,7 @@ class _StoryInputState extends State<StoryInput> {
   TextEditingController desc = TextEditingController();
   XFile? image;
   final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
 
   final ImagePicker picker = ImagePicker();
 
@@ -42,9 +43,17 @@ class _StoryInputState extends State<StoryInput> {
   void initState() {
     Provider.of<Users>(context, listen: false).getUserData();
     if (widget.id != null) {
+      setState(() {
+        _isLoading = true;
+      });
       Future.delayed(Duration.zero).then((_) {
         Provider.of<Stories>(context, listen: false)
-            .getStoryDetail(int.parse(widget.id!));
+            .getStoryDetail(int.parse(widget.id!))
+            .then((_) {
+          setState(() {
+            _isLoading = false;
+          });
+        });
       });
     }
     super.initState();
@@ -311,117 +320,126 @@ class _StoryInputState extends State<StoryInput> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-          child: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: InkWell(
-                onTap: () {
-                  myAlert();
-                },
-                child: image != null
-                    ? Container(
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Stack(
-                          children: [
-                            Image.file(
-                              //to show image, you type like this.
-                              File(image!.path),
-                              fit: BoxFit.contain,
-                              width: MediaQuery.of(context).size.width,
-                              height: 300,
-                            ),
-                            Positioned(
-                              right: 10,
-                              bottom: 20,
-                              child: IconButton(
-                                onPressed: () {
-                                  myAlert();
-                                },
-                                icon: const Icon(Icons.edit),
-                                color: Colors.white,
-                                style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(
-                                        Colors.black87)),
+      body: _isLoading
+          ? const Center(
+              child: Padding(
+                padding: EdgeInsets.all(50),
+                child: CircularProgressIndicator(),
+              ),
+            )
+          : SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: InkWell(
+                        onTap: () {
+                          myAlert();
+                        },
+                        child: image != null
+                            ? Container(
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                child: Stack(
+                                  children: [
+                                    Image.file(
+                                      //to show image, you type like this.
+                                      File(image!.path),
+                                      fit: BoxFit.contain,
+                                      width: MediaQuery.of(context).size.width,
+                                      height: 300,
+                                    ),
+                                    Positioned(
+                                      right: 10,
+                                      bottom: 20,
+                                      child: IconButton(
+                                        onPressed: () {
+                                          myAlert();
+                                        },
+                                        icon: const Icon(Icons.edit),
+                                        color: Colors.white,
+                                        style: ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStateProperty.all(
+                                                    Colors.black87)),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : DottedBorder(
+                                radius: const Radius.circular(10),
+                                color: Colors.black,
+                                strokeWidth: 1,
+                                dashPattern: const [
+                                  5,
+                                  5,
+                                ],
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 30, horizontal: 20),
+                                  child: const Column(
+                                    children: [
+                                      Icon(Icons.image_outlined),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text("Tap to add cover"),
+                                    ],
+                                  ),
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : DottedBorder(
-                        radius: const Radius.circular(10),
-                        color: Colors.black,
-                        strokeWidth: 1,
-                        dashPattern: const [
-                          5,
-                          5,
-                        ],
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 30, horizontal: 20),
-                          child: const Column(
-                            children: [
-                              Icon(Icons.image_outlined),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Text("Tap to add cover"),
-                            ],
-                          ),
-                        ),
                       ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              labelText: "Story Title",
+                            ),
+                            controller: title,
+                            validator: (value) {
+                              if (value != null) {
+                                if (value.isEmpty) {
+                                  return "Story Title cannot be empty";
+                                }
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              hintText: "Tap here to start writing",
+                              border: InputBorder.none,
+                            ),
+                            maxLines: null,
+                            controller: desc,
+                            validator: (value) {
+                              if (value != null) {
+                                if (value.isEmpty) {
+                                  return "Story Description cannot be empty";
+                                }
+                              }
+                              return null;
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      labelText: "Story Title",
-                    ),
-                    controller: title,
-                    validator: (value) {
-                      if (value != null) {
-                        if (value.isEmpty) {
-                          return "Story Title cannot be empty";
-                        }
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      hintText: "Tap here to start writing",
-                      border: InputBorder.none,
-                    ),
-                    maxLines: null,
-                    controller: desc,
-                    validator: (value) {
-                      if (value != null) {
-                        if (value.isEmpty) {
-                          return "Story Description cannot be empty";
-                        }
-                      }
-                      return null;
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      )),
     );
   }
 }

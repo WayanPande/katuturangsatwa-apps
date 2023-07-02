@@ -7,7 +7,9 @@ import '../widgets/dashboard_card.dart';
 
 class CategoriesDetail extends StatefulWidget {
   final String id, title;
-  const CategoriesDetail({Key? key, required this.id, required this.title}) : super(key: key);
+
+  const CategoriesDetail({Key? key, required this.id, required this.title})
+      : super(key: key);
 
   @override
   _CategoriesDetailState createState() {
@@ -17,12 +19,22 @@ class CategoriesDetail extends StatefulWidget {
 
 class _CategoriesDetailState extends State<CategoriesDetail> {
   List<Story> _storyList = [];
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
+    setState(() {
+      _isLoading = true;
+    });
     Future.delayed(Duration.zero).then((_) {
-      Provider.of<Stories>(context, listen: false).getStoriesPerCategory(widget.id);
+      Provider.of<Stories>(context, listen: false)
+          .getStoriesPerCategory(widget.id)
+          .then((_) {
+        setState(() {
+          _isLoading = false;
+        });
+      });
     });
   }
 
@@ -44,22 +56,35 @@ class _CategoriesDetailState extends State<CategoriesDetail> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              child: _storyList.isNotEmpty ? Column(
-                children: List.generate(
-                  _storyList.length,
-                      (index) {
-                    return DashboardStoryCard(
-                      title: _storyList[index].judul ?? "katuturangsatwa",
-                      img: _storyList[index].gambar!,
-                      author: _storyList[index].author ?? "katuturangsatwa",
-                      id: _storyList[index].id!,
-                    );
-                  },
-                ),
-              ) : const Text("no data"),
-            )
+            _isLoading
+                ? const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(50),
+                      child: CircularProgressIndicator(),
+                    ),
+                  )
+                : Container(
+                    padding: const EdgeInsets.all(10),
+                    child: _storyList.isNotEmpty
+                        ? Column(
+                            children: List.generate(
+                              _storyList.length,
+                              (index) {
+                                return DashboardStoryCard(
+                                  title: _storyList[index].judul ??
+                                      "katuturangsatwa",
+                                  img: _storyList[index].gambar!,
+                                  author: _storyList[index].author ??
+                                      "katuturangsatwa",
+                                  id: _storyList[index].id!,
+                                );
+                              },
+                            ),
+                          )
+                        : const Center(
+                            child: Text("no data"),
+                          ),
+                  )
           ],
         ),
       ),

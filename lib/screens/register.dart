@@ -205,7 +205,7 @@ class _RegisterState extends State<Register> {
                     Row(
                       children: [
                         Expanded(
-                          child: FilledButton(
+                          child: FilledButton.tonal(
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
                                 HttpService()

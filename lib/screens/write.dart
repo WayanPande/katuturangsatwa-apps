@@ -21,11 +21,19 @@ class Write extends StatefulWidget {
 
 class _WriteState extends State<Write> {
   bool _showFab = false;
+  bool _isLoading = false;
 
   @override
   void initState() {
+    setState(() {
+      _isLoading = true;
+    });
     Future.delayed(Duration.zero).then((_) {
-      Provider.of<Stories>(context, listen: false).getStoriesWriter();
+      Provider.of<Stories>(context, listen: false).getStoriesWriter().then((_) {
+        setState(() {
+          _isLoading = false;
+        });
+      });
     });
     super.initState();
   }
@@ -33,12 +41,6 @@ class _WriteState extends State<Write> {
   @override
   void dispose() {
     super.dispose();
-  }
-
-  Future<void> _fetchPage() async {
-    Future.delayed(Duration.zero).then((_) {
-      Provider.of<Stories>(context, listen: false).getStoriesWriter();
-    });
   }
 
   @override
@@ -109,23 +111,35 @@ class _WriteState extends State<Write> {
                           ),
                         ),
                       ),
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        child: Column(
-                          children: List.generate(
-                            story.length,
-                            (index) {
-                              return WriteStoryCard(
-                                title: story[index].judul ?? "katuturangsatwa",
-                                img: story[index].gambar!,
-                                author:
-                                    story[index].author ?? "katuturangsatwa",
-                                id: story[index].id!,
-                              );
-                            },
-                          ),
-                        ),
-                      )
+                      _isLoading
+                          ? const Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(50),
+                                child: CircularProgressIndicator(),
+                              ),
+                            )
+                          : Container(
+                              padding: const EdgeInsets.all(10),
+                              child: story.isNotEmpty
+                                  ? Column(
+                                      children: List.generate(
+                                        story.length,
+                                        (index) {
+                                          return WriteStoryCard(
+                                            title: story[index].judul ??
+                                                "katuturangsatwa",
+                                            img: story[index].gambar!,
+                                            author: story[index].author ??
+                                                "katuturangsatwa",
+                                            id: story[index].id!,
+                                          );
+                                        },
+                                      ),
+                                    )
+                                  : const Center(
+                                      child: Text("no data"),
+                                    ),
+                            )
                     ],
                   ),
                 ),

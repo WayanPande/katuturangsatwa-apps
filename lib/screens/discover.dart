@@ -24,6 +24,7 @@ class _DiscoverState extends State<Discover> {
   final FocusNode _focus = FocusNode();
   static const _pageSize = 20;
   List<Categories> _categoriesList = [];
+  bool _isLoading = false;
 
   final PagingController<int, Story> _pagingController =
       PagingController(firstPageKey: 1);
@@ -33,8 +34,15 @@ class _DiscoverState extends State<Discover> {
     _pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
+    setState(() {
+      _isLoading = true;
+    });
     Future.delayed(Duration.zero).then((_) {
-      Provider.of<Stories>(context, listen: false).getCategories();
+      Provider.of<Stories>(context, listen: false).getCategories().then((_) {
+        setState(() {
+          _isLoading = false;
+        });
+      });
     });
     super.initState();
   }
@@ -50,8 +58,8 @@ class _DiscoverState extends State<Discover> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      final newItems =
-          await HttpService().getStoriesPaginate(_pageSize, pageKey, _searchController.text);
+      final newItems = await HttpService()
+          .getStoriesPaginate(_pageSize, pageKey, _searchController.text);
       var finalData = newItems.map((e) => Story.fromJson(e)).toList();
       final isLastPage = finalData.length < _pageSize;
       if (isLastPage) {
@@ -187,22 +195,31 @@ class _DiscoverState extends State<Discover> {
                                 const SizedBox(
                                   height: 20,
                                 ),
-                                GridView.count(
-                                  shrinkWrap: true,
-                                  physics: const ScrollPhysics(),
-                                  crossAxisCount: 2,
-                                  crossAxisSpacing: 10,
-                                  mainAxisSpacing: 10,
-                                  childAspectRatio: 3,
-                                  children: List.generate(
-                                    _categoriesList.length,
-                                    (index) => TagCard(
-                                      key: Key("tagCard-$index"),
-                                      id: _categoriesList[index].id!,
-                                      label: _categoriesList[index].name ?? "",
-                                    ),
-                                  ),
-                                ),
+                                _isLoading
+                                    ? const Center(
+                                        child: Padding(
+                                          padding: EdgeInsets.all(50),
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                      )
+                                    : GridView.count(
+                                        shrinkWrap: true,
+                                        physics: const ScrollPhysics(),
+                                        crossAxisCount: 2,
+                                        crossAxisSpacing: 10,
+                                        mainAxisSpacing: 10,
+                                        childAspectRatio: 3,
+                                        children: List.generate(
+                                          _categoriesList.length,
+                                          (index) => TagCard(
+                                            key: Key("tagCard-$index"),
+                                            id: _categoriesList[index].id!,
+                                            label:
+                                                _categoriesList[index].name ??
+                                                    "",
+                                          ),
+                                        ),
+                                      ),
                               ],
                             ),
                           )

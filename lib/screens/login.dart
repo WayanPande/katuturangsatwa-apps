@@ -23,6 +23,7 @@ class _LoginState extends State<Login> {
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -115,25 +116,61 @@ class _LoginState extends State<Login> {
                     Row(
                       children: [
                         Expanded(
-                          child: FilledButton(
+                          child: FilledButton.tonal(
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
+                                setState(() {
+                                  _isLoading = true;
+                                });
                                 authService
                                     .login(LoginData(
                                         username: username.text,
                                         password: password.text))
                                     .then((value) {
-                                  if (value) {
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  if (value["code"] == 200) {
                                     Provider.of<Users>(context, listen: false)
                                         .getUserData();
                                     context.goNamed(APP_PAGE.home.toName);
+                                  } else {
+                                    showDialog<String>(
+                                      context: context,
+                                      barrierDismissible: false,
+                                      builder: (BuildContext contextAlert) =>
+                                          AlertDialog(
+                                        title: const Text('Fail to login'),
+                                        content: Text(value["error"] ??
+                                            "Please try again"),
+                                        actions: <Widget>[
+                                          Center(
+                                            child: FilledButton(
+                                              onPressed: () {
+                                                Navigator.pop(
+                                                    contextAlert, 'OK');
+                                              },
+                                              child: const Text('OK'),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    );
                                   }
                                 });
                               }
                             },
-                            child: const Text(
-                              "Login",
-                            ),
+                            child: _isLoading
+                                ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: Center(
+                                  child: CircularProgressIndicator()
+                              ),
+                            )
+                                : const Text(
+                                    "Login",
+                                  ),
                           ),
                         ),
                       ],

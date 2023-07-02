@@ -29,10 +29,11 @@ class _StoryDetailState extends State<StoryDetail> {
     });
     Future.delayed(Duration.zero).then((_) {
       Provider.of<Stories>(context, listen: false)
-          .getStoryDetail(int.parse(widget.id));
-    }).then((_) {
-      setState(() {
-        _isLoading = false;
+          .getStoryDetail(int.parse(widget.id))
+          .then((_) {
+        setState(() {
+          _isLoading = false;
+        });
       });
     });
   }
@@ -86,8 +87,10 @@ class _StoryDetailState extends State<StoryDetail> {
                   ],
                 ),
                 onPressed: () {
-                  context.pushNamed(APP_PAGE.reader.toName,
-                      queryParameters: {"text": story?.text ?? "", "title": story?.judul ?? ""});
+                  context.pushNamed(APP_PAGE.reader.toName, queryParameters: {
+                    "text": story?.text ?? "",
+                    "title": story?.judul ?? ""
+                  });
                 },
               ),
             ),
@@ -148,9 +151,10 @@ class _StoryDetailState extends State<StoryDetail> {
                             if (loadingProgress == null) return child;
                             return Center(
                               child: CircularProgressIndicator(
-                                value: loadingProgress.expectedTotalBytes != null
+                                value: loadingProgress.expectedTotalBytes !=
+                                        null
                                     ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
+                                        loadingProgress.expectedTotalBytes!
                                     : null,
                               ),
                             );

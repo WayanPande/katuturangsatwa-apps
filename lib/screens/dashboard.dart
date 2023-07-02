@@ -19,13 +19,27 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   List<Story> _storyList = [];
   List<Story> _storyListLatest = [];
+  bool _isLoading = false;
+  bool _isLoadingCarousel = false;
 
   @override
   void initState() {
     super.initState();
+    setState(() {
+      _isLoading = true;
+      _isLoadingCarousel = true;
+    });
     Future.delayed(Duration.zero).then((_) {
-      Provider.of<Stories>(context, listen: false).getStories();
-      Provider.of<Stories>(context, listen: false).getStoriesLatest();
+      Provider.of<Stories>(context, listen: false).getStories().then((_) {
+        setState(() {
+          _isLoadingCarousel = false;
+        });
+      });
+      Provider.of<Stories>(context, listen: false).getStoriesLatest().then((_) {
+        setState(() {
+          _isLoading = false;
+        });
+      });
     });
   }
 
@@ -60,7 +74,14 @@ class _DashboardState extends State<Dashboard> {
                   ],
                 ),
               ),
-              DashboardCarousel(data: _storyListLatest),
+              _isLoadingCarousel
+                  ? const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(50),
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  : DashboardCarousel(data: _storyListLatest),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: Row(
@@ -74,22 +95,33 @@ class _DashboardState extends State<Dashboard> {
                   ],
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.all(10),
-                child: _storyList.isNotEmpty ? Column(
-                  children: List.generate(
-                    _storyList.length,
-                        (index) {
-                      return DashboardStoryCard(
-                        title: _storyList[index].judul ?? "katuturangsatwa",
-                        img: _storyList[index].gambar!,
-                        author: _storyList[index].author ?? "katuturangsatwa",
-                        id: _storyList[index].id!,
-                      );
-                    },
-                  ),
-                ) : const Text("no data"),
-              ),
+              _isLoading
+                  ? const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(50),
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  : Container(
+                      padding: const EdgeInsets.all(10),
+                      child: _storyList.isNotEmpty
+                          ? Column(
+                              children: List.generate(
+                                _storyList.length,
+                                (index) {
+                                  return DashboardStoryCard(
+                                    title: _storyList[index].judul ??
+                                        "katuturangsatwa",
+                                    img: _storyList[index].gambar!,
+                                    author: _storyList[index].author ??
+                                        "katuturangsatwa",
+                                    id: _storyList[index].id!,
+                                  );
+                                },
+                              ),
+                            )
+                          : const Text("no data"),
+                    ),
             ],
           ),
         ),
