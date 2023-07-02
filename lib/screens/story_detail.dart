@@ -63,16 +63,6 @@ class _StoryDetailState extends State<StoryDetail> {
       bottomNavigationBar: BottomAppBar(
         child: Row(
           children: [
-            IconButton.outlined(
-              icon: const Icon(Icons.bookmark_border),
-              onPressed: () {},
-              style: ButtonStyle(
-                padding: MaterialStateProperty.all(
-                  const EdgeInsets.all(15),
-                ),
-              ),
-            ),
-            const SizedBox(width: 30),
             Expanded(
               child: FilledButton.tonal(
                 style: ButtonStyle(
