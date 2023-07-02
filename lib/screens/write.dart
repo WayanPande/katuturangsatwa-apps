@@ -136,10 +136,15 @@ class _WriteState extends State<Write> {
                                         },
                                       ),
                                     )
-                                  : const Center(
-                                      child: Text("no data"),
+                                  : Stack(
+                                      children: [
+                                        const Center(
+                                          child: Text("no data"),
+                                        ),
+                                        ListView(),
+                                      ],
                                     ),
-                            )
+                            ),
                     ],
                   ),
                 ),
