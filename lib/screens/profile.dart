@@ -28,10 +28,10 @@ class _ProfileState extends State<Profile> {
       _isLoading = true;
     });
     Future.delayed(Duration.zero).then((_) {
-      Provider.of<Users>(context, listen: false).getUserData();
-    }).then((_) {
-      setState(() {
-        _isLoading = false;
+      Provider.of<Users>(context, listen: false).getUserData().then((_) {
+        setState(() {
+          _isLoading = false;
+        });
       });
     });
   }
@@ -67,74 +67,92 @@ class _ProfileState extends State<Profile> {
               ],
             ),
             body: SafeArea(
-                child: SingleChildScrollView(
-                    child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                          width: 5, color: Theme.of(context).primaryColorLight),
-                        shape: BoxShape.circle,
-                    ),
-                    child: ClipOval(
-                      child: SizedBox.fromSize(
-                        size: const Size.fromRadius(75),
-                        child: Image.network(
-                          dotenv.env['PROFILE_IMG_URL']! + (user?.gambar ?? ""),
-                          fit: BoxFit.cover,
-                          width: MediaQuery.of(context).size.width / 3,
-                          loadingBuilder: (BuildContext context, Widget child,
-                              ImageChunkEvent? loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Center(
-                              child: CircularProgressIndicator(
-                                value: loadingProgress.expectedTotalBytes != null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
-                                    : null,
+              child: _isLoading
+                  ? const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(50),
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  : SingleChildScrollView(
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    width: 5,
+                                    color: Theme.of(context).primaryColorLight),
+                                shape: BoxShape.circle,
                               ),
-                            );
-                          },
+                              child: ClipOval(
+                                child: SizedBox.fromSize(
+                                  size: const Size.fromRadius(75),
+                                  child: Image.network(
+                                    dotenv.env['PROFILE_IMG_URL']! +
+                                        (user?.gambar ?? ""),
+                                    fit: BoxFit.cover,
+                                    width:
+                                        MediaQuery.of(context).size.width / 3,
+                                    loadingBuilder: (BuildContext context,
+                                        Widget child,
+                                        ImageChunkEvent? loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Center(
+                                        child: CircularProgressIndicator(
+                                          value: loadingProgress
+                                                      .expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  loadingProgress
+                                                      .expectedTotalBytes!
+                                              : null,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Text(
+                              user?.nama ?? "",
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.w700),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              user?.email ?? "",
+                              style: const TextStyle(
+                                fontSize: 15,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                if (appService.loginState) {
+                                  logout();
+                                  authService.logOut();
+                                }
+                                context.pushNamed(APP_PAGE.login.toName);
+                              },
+                              child: Text(
+                                  appService.loginState ? "Logout" : "Login"),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    user?.nama ?? "",
-                    style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    user?.email ?? "",
-                    style: const TextStyle(
-                      fontSize: 15,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (appService.loginState) {
-                        logout();
-                        authService.logOut();
-                      }
-                      context.pushNamed(APP_PAGE.login.toName);
-                    },
-                    child: Text(appService.loginState ? "Logout" : "Login"),
-                  ),
-                ],
-              ),
-            ))),
+            ),
           );
   }
 }
