@@ -89,6 +89,13 @@ class RegisterData {
       required this.name});
 }
 
+class UpdateProfile {
+  final String id, name;
+  final File? img_update;
+
+  UpdateProfile({required this.id, this.img_update, required this.name});
+}
+
 class RegisterStory {
   final String judul_satwa, text_satwa, penulis_satwa;
   final File img_satwa;
@@ -110,9 +117,9 @@ class UpdateStory {
 
   UpdateStory(
       {required this.judul_satwa,
-        required this.text_satwa,
-        required this.id,
-        this.img_satwa});
+      required this.text_satwa,
+      required this.id,
+      this.img_satwa});
 }
 
 class User {

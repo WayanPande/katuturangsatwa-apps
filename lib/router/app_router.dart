@@ -8,6 +8,7 @@ import 'package:katuturangsatwa/screens/dashboard.dart';
 import 'package:katuturangsatwa/screens/discover.dart';
 import 'package:katuturangsatwa/screens/login.dart';
 import 'package:katuturangsatwa/screens/profile.dart';
+import 'package:katuturangsatwa/screens/profle_update.dart';
 import 'package:katuturangsatwa/screens/reader.dart';
 import 'package:katuturangsatwa/screens/register.dart';
 import 'package:katuturangsatwa/screens/story_detail.dart';
@@ -50,7 +51,7 @@ class AppRouter {
       initialLocation: APP_PAGE.profile.toPath,
       icon: const Icon(Icons.person_outline),
       selectedIcon: const Icon(Icons.person),
-      label: 'Person',
+      label: 'Profile',
     ),
   ];
 
@@ -135,6 +136,15 @@ class AppRouter {
           return Register();
         },
         pageBuilder: defaultPageBuilder(Register()),
+      ),
+      GoRoute(
+        path: APP_PAGE.profileUpdate.toPath,
+        name: APP_PAGE.profileUpdate.toName,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (BuildContext context, GoRouterState state) {
+          return ProfileUpdate();
+        },
+        pageBuilder: defaultPageBuilder(ProfileUpdate()),
       ),
       GoRoute(
         path: APP_PAGE.storyInput.toPath,
