@@ -237,4 +237,37 @@ class HttpService {
     return res.statusCode;
   }
 
+  Future<int> updateCategory(UpdateCategory data) async {
+    final String URL;
+    URL = "${dotenv.env['API_URL']}api/v1/category_single_update";
+    Map<String,String> headers={
+      "Content-type": "multipart/form-data"
+    };
+
+    var request = http.MultipartRequest(
+      'PUT', Uri.parse(URL),
+    );
+    request.headers.addAll(headers);
+
+    final img_cat = data.img_cat;
+    if(img_cat != null){
+      request.files.add(
+        http.MultipartFile(
+            'img_cat',
+            img_cat.readAsBytes().asStream(),
+            img_cat.lengthSync(),
+            filename: "test${img_cat.path.split('/').last}",
+            contentType: MediaType('image', "jpg")
+        ),
+      );
+    }
+
+    request.fields["nama_cat"]= data.nama_cat;
+    request.fields["id"]= data.id;
+
+    var res = await request.send();
+
+    return res.statusCode;
+  }
+
 }

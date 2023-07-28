@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:katuturangsatwa/router/route_utils.dart';
+import 'package:katuturangsatwa/screens/admin.dart';
+import 'package:katuturangsatwa/screens/category_update.dart';
 import 'package:katuturangsatwa/screens/dashboard.dart';
 import 'package:katuturangsatwa/screens/discover.dart';
 import 'package:katuturangsatwa/screens/login.dart';
@@ -199,6 +201,31 @@ class AppRouter {
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const OnBoardingPage(),
         pageBuilder: defaultPageBuilder(const OnBoardingPage()),
+      ),
+      GoRoute(
+        path: APP_PAGE.admin.toPath,
+        name: APP_PAGE.admin.toName,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => Admin(),
+        pageBuilder: defaultPageBuilder(Admin()),
+      ),
+      GoRoute(
+        path: APP_PAGE.categoryUpdate.toPath,
+        name: APP_PAGE.categoryUpdate.toName,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (BuildContext context, GoRouterState state) {
+          return CategoryUpdate(
+            id: state.queryParameters['id'],
+            name: state.queryParameters['name'],
+          );
+        },
+        pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
+          context: context,
+          state: state,
+          child: CategoryUpdate(
+              id: state.queryParameters['id'],
+              name: state.queryParameters['name']),
+        ),
       ),
       GoRoute(
         path: APP_PAGE.categoriesDetail.toPath,

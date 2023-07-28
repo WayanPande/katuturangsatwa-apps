@@ -134,6 +134,21 @@ class _ProfileState extends State<Profile> {
                                 fontSize: 15,
                               ),
                             ),
+                            user?.id == 1
+                                ? Column(
+                                    children: [
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          context.pushNamed(APP_PAGE.admin.toName);
+                                        },
+                                        child: Text("Admin Menu"),
+                                      )
+                                    ],
+                                  )
+                                : const SizedBox(),
                             const SizedBox(
                               height: 20,
                             ),

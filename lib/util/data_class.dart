@@ -122,6 +122,15 @@ class UpdateStory {
       this.img_satwa});
 }
 
+class UpdateCategory {
+  final String nama_cat, id;
+  final File? img_cat;
+
+  // final int penulis_satwa;
+
+  UpdateCategory({required this.nama_cat, required this.id, this.img_cat});
+}
+
 class User {
   String? email;
   String? gambar;
