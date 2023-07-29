@@ -270,4 +270,12 @@ class HttpService {
     return res.statusCode;
   }
 
+  Future<int> createCategory() async {
+    final String URL;
+    URL = "${dotenv.env['API_URL']}api/v1/generate_category";
+    http.Response res = await http.get(Uri.parse(URL));
+
+    return res.statusCode;
+  }
+
 }

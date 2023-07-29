@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:go_router/go_router.dart';
-import 'package:katuturangsatwa/router/route_utils.dart';
 import 'package:katuturangsatwa/screens/redirect_login.dart';
 import 'package:katuturangsatwa/widgets/category_card.dart';
-import 'package:katuturangsatwa/widgets/write_card.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
+import 'package:katuturangsatwa/service/http_service.dart';
 
 import '../config/AppRouter.dart';
 import '../providers/stories.dart';
-import '../widgets/dashboard_card.dart';
 
 class Admin extends StatefulWidget {
   Admin({Key? key}) : super(key: key);
@@ -21,8 +19,8 @@ class Admin extends StatefulWidget {
 }
 
 class _AdminState extends State<Admin> {
-  bool _showFab = false;
   bool _isLoading = false;
+  bool _isLoadingCat = false;
 
   @override
   void initState() {
@@ -44,36 +42,117 @@ class _AdminState extends State<Admin> {
     super.dispose();
   }
 
+  //show popup dialog
+  void myAlert() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          title: const Text(
+            "Are you sure want do this?",
+          ),
+          content: Wrap(
+            children: [
+              Column(
+                children: [
+                  const Text(
+                      "The process of making the categories will take some times."),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      FilledButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text("Cancel"),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          setState(() {
+                            _isLoadingCat = true;
+                          });
+                          HttpService().createCategory().then((value) => {
+                                setState(() {
+                                  _isLoadingCat = false;
+                                }),
+                                myAlert2()
+                              });
+                        },
+                        child: const Text("Continue"),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void myAlert2() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          title: const Text(
+            "Category Successfully Created.",
+          ),
+          content: Wrap(
+            children: [
+              Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text("Continue"),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final appService = Provider.of<AppService>(context);
-    const duration = Duration(milliseconds: 300);
     final categories = Provider.of<Stories>(context).categoryList;
+
+    if (_isLoadingCat) {
+      context.loaderOverlay.show();
+    } else {
+      context.loaderOverlay.hide();
+    }
 
     return !appService.loginState
         ? const RedirectLogin()
-        : Scaffold(
-            appBar: AppBar(
-              title: const Text("Admin"),
-            ),
-            body: RefreshIndicator(
-              onRefresh: () {
-                return Future.delayed(Duration.zero).then((_) {
-                  Provider.of<Stories>(context, listen: false)
-                      .getCategories();
-                });
-              },
-              child: NotificationListener<UserScrollNotification>(
-                onNotification: (notification) {
-                  final ScrollDirection direction = notification.direction;
-                  setState(() {
-                    if (direction == ScrollDirection.reverse) {
-                      _showFab = true;
-                    } else if (notification.metrics.pixels == 0) {
-                      _showFab = false;
-                    }
+        : LoaderOverlay(
+            child: Scaffold(
+              appBar: AppBar(
+                title: const Text("Admin"),
+              ),
+              body: RefreshIndicator(
+                onRefresh: () {
+                  return Future.delayed(Duration.zero).then((_) {
+                    Provider.of<Stories>(context, listen: false)
+                        .getCategories();
                   });
-                  return true;
                 },
                 child: SingleChildScrollView(
                   child: Column(
@@ -82,7 +161,7 @@ class _AdminState extends State<Admin> {
                       ListTile(
                         title: const Text("Create category"),
                         onTap: () {
-                          context.pushNamed(APP_PAGE.storyInput.toName);
+                          myAlert();
                         },
                         leading: const Icon(Icons.note_add),
                       ),

@@ -8,6 +8,7 @@ import 'package:katuturangsatwa/providers/stories.dart';
 import 'package:katuturangsatwa/providers/users.dart';
 import 'package:katuturangsatwa/router/app_router.dart';
 import 'package:katuturangsatwa/services/auth_services.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -78,18 +79,19 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-        providers: [
-          ChangeNotifierProvider<AppService>(create: (_) => appService),
-          Provider<AppRouter>(create: (_) => AppRouter(appService)),
-          Provider<AuthService>(create: (_) => authService),
-          ChangeNotifierProvider<Stories>(create: (_) => stories),
-          ChangeNotifierProvider<Users>(create: (_) => user)
-        ],
-        child: Builder(
-          builder: (context) {
-            final GoRouter goRouter =
-                Provider.of<AppRouter>(context, listen: false).router;
-            return MaterialApp.router(
+      providers: [
+        ChangeNotifierProvider<AppService>(create: (_) => appService),
+        Provider<AppRouter>(create: (_) => AppRouter(appService)),
+        Provider<AuthService>(create: (_) => authService),
+        ChangeNotifierProvider<Stories>(create: (_) => stories),
+        ChangeNotifierProvider<Users>(create: (_) => user)
+      ],
+      child: Builder(
+        builder: (context) {
+          final GoRouter goRouter =
+              Provider.of<AppRouter>(context, listen: false).router;
+          return GlobalLoaderOverlay(
+            child: MaterialApp.router(
               title: 'Katuturangsatwa',
               theme: ThemeData(
                   colorSchemeSeed: Colors.blue,
@@ -97,8 +99,10 @@ class _MyAppState extends State<MyApp> {
                   fontFamily: "Sen"),
               debugShowCheckedModeBanner: false,
               routerConfig: goRouter,
-            );
-          },
-        ));
+            ),
+          );
+        },
+      ),
+    );
   }
 }
