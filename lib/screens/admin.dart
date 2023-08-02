@@ -115,6 +115,16 @@ class _AdminState extends State<Admin> {
                       ElevatedButton(
                         onPressed: () {
                           Navigator.pop(context);
+                          setState(() {
+                            _isLoading = true;
+                          });
+                          Future.delayed(Duration.zero).then((_) {
+                            Provider.of<Stories>(context, listen: false).getCategories().then((_) {
+                              setState(() {
+                                _isLoading = false;
+                              });
+                            });
+                          });
                         },
                         child: const Text("Continue"),
                       ),
