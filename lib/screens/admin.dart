@@ -43,8 +43,11 @@ class _AdminState extends State<Admin> {
   }
 
   //show popup dialog
-  void myAlert() {
-    showDialog(
+  Future<dynamic> myAlert() {
+    setState(() {
+      _isLoadingCat = false;
+    });
+    return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -72,16 +75,10 @@ class _AdminState extends State<Admin> {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.pop(context);
                           setState(() {
                             _isLoadingCat = true;
                           });
-                          HttpService().createCategory().then((value) => {
-                                setState(() {
-                                  _isLoadingCat = false;
-                                }),
-                                myAlert2()
-                              });
+                          Navigator.pop(context);
                         },
                         child: const Text("Continue"),
                       ),
@@ -119,7 +116,9 @@ class _AdminState extends State<Admin> {
                             _isLoading = true;
                           });
                           Future.delayed(Duration.zero).then((_) {
-                            Provider.of<Stories>(context, listen: false).getCategories().then((_) {
+                            Provider.of<Stories>(context, listen: false)
+                                .getCategories()
+                                .then((_) {
                               setState(() {
                                 _isLoading = false;
                               });
@@ -144,12 +143,6 @@ class _AdminState extends State<Admin> {
     final appService = Provider.of<AppService>(context);
     final categories = Provider.of<Stories>(context).categoryList;
 
-    if (_isLoadingCat) {
-      context.loaderOverlay.show();
-    } else {
-      context.loaderOverlay.hide();
-    }
-
     return !appService.loginState
         ? const RedirectLogin()
         : LoaderOverlay(
@@ -169,9 +162,17 @@ class _AdminState extends State<Admin> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ListTile(
-                        title: const Text("Create category"),
+                        title: const Text("Generate category"),
                         onTap: () {
-                          myAlert();
+                          myAlert().then((value) {
+                            if(_isLoadingCat){
+                              context.loaderOverlay.show();
+                              HttpService().createCategory().then((value) {
+                                context.loaderOverlay.hide();
+                                myAlert2();
+                              });
+                            }
+                          });
                         },
                         leading: const Icon(Icons.note_add),
                       ),
